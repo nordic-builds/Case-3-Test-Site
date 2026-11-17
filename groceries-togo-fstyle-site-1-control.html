@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order groceries online | Groceries ToGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#0091cf;--blue-dark:#006d9c;--ink:#1e2329;--muted:#5d6b7d;--grey:#f3f3f3;--line:#e3e6ea;--green:#00a651;--green-dark:#008c44;--info:#e5f4fb;--red:#e4002b}
+  *{box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{margin:0;font-family:"Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:16px}
+  a{color:var(--blue);text-decoration:none}
+  button{font-family:inherit}
+  .mi{display:inline-flex;font-size:24px;line-height:1}
+  .mi svg{display:block}
+
+  header{position:sticky;top:0;z-index:20;background:var(--blue);padding:8px 14px}
+  .bar{display:flex;align-items:center;gap:18px;height:44px}
+  .menu-btn{display:flex;align-items:center;gap:6px;height:44px;padding:0 18px;border:2px solid #fff;background:transparent;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  .logo{display:flex;align-items:center;height:44px;cursor:pointer}
+  .logo .wm{color:#fff;font-weight:900;font-size:27px;letter-spacing:-.04em;line-height:1}
+  .logo .wm span{color:#0b2a3a;margin-left:1px}
+  .spacer{flex:1}
+  .login{display:flex;align-items:center;gap:6px;color:#fff;font-weight:800;font-size:15px;padding:0 18px}
+  .cart{display:flex;align-items:center;gap:20px;background:var(--blue-dark);color:#fff;font-weight:800;font-size:15px;height:44px;padding:0 26px;cursor:pointer;position:relative;border:0}
+  .cart .badge{position:absolute;top:4px;left:38px;background:var(--green);color:#fff;font-size:11px;font-weight:900;border-radius:10px;padding:1px 6px}
+  .cart .sum{font-weight:900}
+  .search{margin-top:8px;display:flex;align-items:center;background:#fff;border-radius:24px;height:42px;padding:0 6px 0 14px}
+  .search{position:relative}
+  .search input{flex:1;border:0;outline:0;font-size:15px;font-family:inherit;background:transparent;height:100%}
+  .search .clear{color:var(--blue);font-size:13px;padding:0 14px;border-right:1px solid #ccd3da;cursor:pointer;display:none}
+  .search.has-text .clear{display:block}
+  .search .go{color:var(--blue);padding:0 12px;background:none;border:0;cursor:pointer;height:100%;display:flex;align-items:center}
+  .qac{position:absolute;left:0;right:0;top:46px;margin:0;padding:6px 0;list-style:none;background:#fff;border-radius:0 0 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.18);display:none;z-index:50}
+  .qac.open{display:block}
+  .qac li{display:flex;align-items:center;gap:12px;padding:10px 18px;font-size:15px;color:var(--ink);cursor:pointer}
+  .qac li .mi{color:#8a96a3;font-size:18px}
+  .qac li b{font-weight:800}
+  .qac li.act{background:#eef7fc}
+  .qac li.eco-hl{background:rgba(86,192,43,.15)}
+  .qac li.eco-hl.act{background:rgba(86,192,43,.28)}
+  .qac li .leaf{color:#2e8b3d;font-size:18px;margin-left:auto}
+  .rp-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60;display:none}
+  .rp{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:#fff;z-index:61;padding:18px 22px;overflow:auto;display:none;font-size:14px;color:var(--ink)}
+  body.rp-open .rp,body.rp-open .rp-bg{display:block}
+  .rp h2{display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:900;margin:0 0 6px}
+  .rp h2 button{border:0;background:none;font-size:26px;cursor:pointer;color:var(--muted)}
+  .rp label{display:block;font-weight:800;margin:14px 0 4px}
+  .rp label input:not([type=checkbox]),.rp select,.rp textarea{display:block;width:100%;margin-top:4px;padding:8px;border:1px solid #c8d0d8;font:inherit;font-weight:400}
+  .rp label.rp-row{display:flex;gap:8px;align-items:center;font-weight:700}
+  .rp textarea{height:260px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;white-space:pre}
+  .rp-hint{color:var(--muted);font-size:12.5px;line-height:1.5;margin:6px 0}
+  .rp-hint code{background:#f0f2f4;padding:1px 4px}
+  .rp-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .rp-btns button{border:1px solid #c8d0d8;background:#fff;padding:9px 12px;font-weight:800;cursor:pointer}
+  .rp-btns .primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  .noresults{background:#fff;padding:26px;font-size:15px;color:var(--ink);margin-bottom:12px}
+  nav.cats{display:flex;gap:4px;margin-top:8px;overflow-x:auto}
+  nav.cats a{color:#fff;font-weight:800;font-size:14px;padding:8px 14px;white-space:nowrap;border-bottom:3px solid transparent}
+  nav.cats a.on{border-bottom-color:#fff}
+  nav.cats a:hover{background:rgba(255,255,255,.12)}
+
+  .drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:none}
+  .drawer{position:fixed;top:0;left:0;bottom:0;width:300px;background:#fff;z-index:41;transform:translateX(-100%);transition:transform .2s;padding:18px 0}
+  body.menu-open .drawer{transform:none}
+  body.menu-open .drawer-bg{display:block}
+  .drawer h3{margin:0 20px 10px;font-size:13px;font-weight:900;color:var(--muted);text-transform:uppercase}
+  .drawer a{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);color:var(--ink);font-weight:800;font-size:15px}
+  .drawer a .mi{color:var(--blue)}
+
+  .toast{position:fixed;top:160px;right:24px;z-index:30;background:var(--info);color:var(--blue);font-size:13px;line-height:1.45;display:flex;gap:12px;align-items:flex-start;padding:10px 14px;max-width:330px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .toast .i{flex:0 0 20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .toast b{font-weight:900;cursor:pointer;margin-top:2px}
+  .added{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 18px;font-size:14px;font-weight:700;z-index:35;transition:transform .2s;display:flex;gap:10px;align-items:center}
+  .added.show{transform:translateX(-50%) translateY(0)}
+  .added .mi{color:var(--green)}
+
+  .crumbs{padding:12px 14px;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .crumbs a{color:var(--ink)}
+  .crumbs .sep{color:var(--blue);font-size:20px}
+  .crumbs .cur{color:var(--muted)}
+
+  .page{background:var(--grey);margin:14px 14px 40px;padding:0 32px 34px;min-height:400px}
+  .count{display:flex;align-items:center;gap:22px;height:46px;font-weight:900;font-size:14px;letter-spacing:.02em;text-transform:uppercase}
+  .count::before,.count::after{content:"";flex:1;height:2px;background:#fff}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
+  @media(min-width:1200px){.grid{grid-template-columns:repeat(5,1fr)}}
+
+  .card{background:#fff;color:var(--ink);display:flex;flex-direction:column;padding:12px 14px 14px;min-height:290px;cursor:pointer;transition:box-shadow .15s}
+  .card:hover{box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  .card .img{height:126px;display:flex;align-items:center;justify-content:center;margin:0 0 14px}
+  .card .img img{max-height:126px;max-width:100%;object-fit:contain}
+  .card h2{font-size:14px;font-weight:900;line-height:1.35;margin:0 0 3px}
+  .card:hover h2{text-decoration:underline}
+  .meta{font-size:13px;color:var(--muted);line-height:1.4}
+  .meta .brand{font-weight:700}
+  .meta .was{color:var(--red)}
+  .card .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;min-height:56px}
+  .price{color:var(--blue);font-weight:900;font-size:40px;letter-spacing:-.02em;line-height:1}
+  .price.dec{font-size:28px}
+  .price.sale{color:var(--red)}
+  .add{width:36px;height:36px;border:2px solid var(--green);background:#fff;color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:0}
+  .add .mi{font-size:22px}
+  .add.on{background:var(--green);color:#fff}
+  .add .q{position:absolute;top:-9px;right:-9px;background:var(--blue-dark);color:#fff;font-size:11px;font-weight:900;border-radius:10px;padding:1px 5px}
+
+  /* Product detail */
+  .pdp{display:grid;grid-template-columns:1fr;gap:24px;padding:16px 0 30px}
+  @media(min-width:760px){.pdp{grid-template-columns:1fr 1fr}}
+  .pdp .gal{background:#fff;padding:24px;display:flex;align-items:center;justify-content:center;min-height:360px}
+  .pdp .gal img{max-width:100%;max-height:420px;object-fit:contain}
+  .pdp h1{font-size:26px;font-weight:900;line-height:1.2;margin:0 0 4px;color:var(--ink)}
+  .pdp .price{font-size:44px;margin:16px 0 18px}
+  .pdp .price.dec{font-size:34px}
+  .buy{width:100%;background:var(--green);color:#fff;border:0;height:52px;font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+  .buy:hover{background:var(--green-dark)}
+  .qtyrow{display:flex;gap:10px;align-items:stretch}
+  .qtyrow .buy{flex:1}
+  .stepper{display:flex;align-items:center;border:2px solid var(--green);background:#fff}
+  .stepper button{width:44px;height:48px;border:0;background:#fff;color:var(--green);font-size:22px;font-weight:900;cursor:pointer}
+  .stepper span{min-width:34px;text-align:center;font-weight:900;font-size:16px}
+  .inbasket{font-size:13px;color:var(--green-dark);font-weight:700;margin-top:8px;min-height:18px}
+  .acc2{background:#fff;margin-top:14px}
+  .acc2 details{border-bottom:1px solid var(--line)}
+  .acc2 summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:16px 14px;font-weight:900;font-size:13px;text-transform:uppercase}
+  .acc2 summary::-webkit-details-marker{display:none}
+  .acc2 summary .mi{color:var(--blue);transition:transform .15s}
+  .acc2 details[open] summary .mi{transform:rotate(180deg)}
+  .acc2 .body{padding:0 14px 16px;font-size:14px;line-height:1.6;color:var(--ink)}
+  .acc2 .body p{margin:0 0 10px}
+  .acc2 .body ul{margin:0 0 10px;padding-left:20px}
+  .acc2 table{font-size:14px;border-collapse:collapse;width:100%}
+  .acc2 td{padding:5px 0;border-bottom:1px solid var(--line)}
+  .acc2 td:first-child{color:var(--muted);width:45%}
+  .alt h4{font-size:13px;font-weight:900;margin:10px 0 2px;text-transform:uppercase}
+  .alt small{color:var(--muted);font-size:12px}
+  .alt .grid{margin-top:10px}
+
+  /* Basket / checkout */
+  .co{display:grid;grid-template-columns:1fr;gap:20px;padding:16px 0 10px}
+  @media(min-width:860px){.co{grid-template-columns:1.7fr 1fr}}
+  .co h1{font-size:24px;font-weight:900;margin:0 0 12px;color:var(--ink)}
+  .lines{background:#fff}
+  .line{display:grid;grid-template-columns:72px 1fr auto auto;gap:14px;align-items:center;padding:14px;border-bottom:1px solid var(--line)}
+  .line img{width:72px;height:72px;object-fit:contain;cursor:pointer}
+  .line .nm{font-weight:900;font-size:14px;cursor:pointer;color:var(--ink)}
+  .line .nm:hover{text-decoration:underline}
+  .line .rm{background:none;border:0;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;padding:4px 0 0}
+  .line .stepper{border-width:1px;border-color:#c8d0d8}
+  .line .stepper button{width:34px;height:36px;font-size:18px}
+  .line .lt{font-weight:900;font-size:18px;color:var(--ink);min-width:80px;text-align:right}
+  .empty{background:#fff;padding:40px 20px;text-align:center;color:var(--muted)}
+  .empty .buy{width:auto;display:inline-flex;padding:0 28px;margin-top:16px;height:46px;background:var(--blue)}
+  .summary{background:#fff;padding:18px;align-self:start;position:sticky;top:130px}
+  .summary h2{font-size:15px;font-weight:900;margin:0 0 14px;text-transform:uppercase}
+  .summary .row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;color:var(--ink)}
+  .summary .row.total{border-top:2px solid var(--ink);margin-top:10px;padding-top:12px;font-weight:900;font-size:18px}
+  .summary .note{font-size:12px;color:var(--muted);margin:10px 0 16px;line-height:1.5}
+  .summary .buy[disabled]{background:#b9c2cb;cursor:not-allowed}
+  .back{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:14px;margin-top:14px}
+
+  .done{background:#fff;max-width:640px;margin:30px auto;padding:36px 30px;text-align:center}
+  .done .tick{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+  .done .tick .mi{font-size:40px}
+  .done h1{font-size:26px;font-weight:900;margin:0 0 8px}
+  .done p{color:var(--ink);line-height:1.55;margin:0 0 6px}
+  .done table{width:100%;margin:22px 0 8px;border-collapse:collapse;font-size:14px;text-align:left}
+  .done td{padding:7px 4px;border-bottom:1px solid var(--line)}
+  .done td:last-child{text-align:right;font-weight:800}
+  .researcher{margin-top:28px;padding-top:16px;border-top:1px dashed #c8d0d8;font-size:12px;color:var(--muted);display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .researcher button{background:none;border:1px solid #c8d0d8;color:var(--muted);font-size:12px;padding:6px 10px;cursor:pointer}
+
+  footer{margin:120px 34px 0;border-top:1px solid #dadfe4;padding:40px 0 30px;font-size:13px;color:#3b4552}
+  footer h3{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;color:#1a1a1a;margin:0 0 10px;text-transform:uppercase}
+  footer p{margin:0 0 54px;line-height:1.55}
+  .flag{width:28px;height:20px;border-radius:3px;background:var(--red);position:relative;overflow:hidden}
+  .flag::before{content:"";position:absolute;left:8px;top:0;width:4px;height:100%;background:#fff}
+  .flag::after{content:"";position:absolute;top:8px;left:0;height:4px;width:100%;background:#fff}
+  .phone{width:24px;height:24px;border-radius:3px;background:#5d6b7d;color:#fff;display:flex;align-items:center;justify-content:center}
+  .phone .mi{font-size:16px}
+  .acc div{border-bottom:1px solid #dadfe4;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:900;font-size:13px;color:#1a1a1a;text-transform:uppercase}
+  .acc{border-top:1px solid #dadfe4}
+  .acc .mi{color:var(--blue);font-size:22px}
+  .pay{margin-top:40px}
+  .pay h4{margin:0 0 6px;font-size:13px;font-weight:900;color:#1a1a1a}
+  .cards{display:flex;align-items:center;gap:14px}
+  .dk{background:var(--red);color:#fff;font-style:italic;font-weight:900;font-size:15px;padding:3px 6px;border-radius:2px}
+  .visa{color:#1a1f71;font-style:italic;font-weight:900;font-size:28px;letter-spacing:-.02em}
+  .mc{display:flex}.mc i{width:16px;height:16px;border-radius:50%;display:block}
+  .copy{margin-top:40px;font-weight:900;color:#1a1a1a;text-transform:uppercase}
+  .chat{position:fixed;left:6px;bottom:48px;width:56px;height:56px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  .chat .mi{font-size:30px}
+
+  /* ===== Føtex-style theme ===== */
+  :root{--navy:#000037;--fxblue:#3264ff;--fxgrey:#555;--fxline:#eeede8}
+  body{font-family:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#000;background:#fff}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+  header.fx{background:var(--navy);padding:0;position:sticky;top:0;z-index:20}
+  header.fx .topbar{font-size:13px;color:#fff;font-weight:500}
+  header.fx .topbar .wrap{display:flex;gap:22px;height:30px;align-items:center}
+  header.fx .topbar .sp{flex:1}
+  header.fx .bar{display:flex;align-items:center;gap:26px;height:auto;padding:8px 18px 16px}
+  header.fx .logo{height:auto}
+  .badgelogo{display:block;border:2px solid #fff;border-radius:16px;color:#fff;font-weight:700;font-size:16px;line-height:.95;letter-spacing:-.02em;padding:9px 10px;text-align:center}
+  header.fx .search{flex:1;max-width:560px;margin:0;height:46px;border-radius:4px;padding:0 4px 0 14px;background:#fff}
+  header.fx .search input{font-size:16px;color:#000}
+  header.fx .search input::placeholder{color:#666}
+  header.fx .search .clear{border:0;color:#444;font-size:22px;padding:0 10px}
+  header.fx .search .go{color:var(--navy);border-left:1px solid #ccc;height:28px;padding:0 10px 0 12px;margin-left:4px}
+  .hbtn{background:none;border:0;color:#fff;font:500 16px "Barlow",sans-serif;cursor:pointer;padding:6px 4px}
+  header.fx .cart{background:var(--navy);border:1px solid #fff;border-radius:4px;height:42px;padding:0 14px;gap:6px;font:500 16px "Barlow",sans-serif;position:relative}
+  header.fx .cart .badge{position:absolute;top:-10px;right:-10px;left:auto;background:var(--fxblue);border:2px solid #fff;border-radius:50%;width:22px;height:22px;padding:0;display:flex!important;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+  .qac{top:46px;border-radius:0 0 4px 4px;padding:4px 0 8px;border-top:1px solid #e5e5e5;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+  .qac li{padding:6px 14px;font-size:15px;color:#000;gap:8px}
+  .qac li>.mi:first-child{display:none}
+  .qac li b{font-weight:700}
+  .qac li.act{background:#f0f2f7}
+  .page{background:#fff;max-width:1200px;margin:0 auto 40px;padding:22px 18px 30px}
+  .ph{font-size:34px;font-weight:600;color:#1d2f54;margin:0 0 6px}
+  .count{display:block;height:auto;font-weight:400;font-size:14px;color:var(--fxgrey);text-transform:none;letter-spacing:0;text-align:center;margin:6px 0 14px}
+  .count::before,.count::after{display:none}
+  .grid{gap:14px}
+  .card{border:1px solid var(--fxline);border-radius:4px;padding:16px;min-height:0;color:var(--navy)}
+  .card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card .img{height:150px;margin-bottom:14px}
+  .card .img img{max-height:150px}
+  .card h2{font-size:18px;font-weight:600;color:var(--navy);line-height:1.2;margin:0 0 4px;min-height:44px}
+  .card:hover h2{text-decoration:underline}
+  .card .spec{font-size:13px;color:var(--fxgrey);margin-bottom:6px}
+  .card .prow{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+  .card .ship{font-size:10px;color:var(--fxgrey)}
+  .card .ship .was{font-size:12px;color:#d0021b}
+  .card .fprice{font-size:18px;font-weight:600;color:var(--navy)}
+  .card .fprice.sale{color:#d0021b}
+  .card .unit{font-size:12px;color:var(--fxgrey);border-bottom:1px solid #ddd;padding:6px 0 4px;margin-bottom:8px}
+  .card .avail{list-style:none;margin:0;padding:0;font-size:14px;color:var(--fxgrey)}
+  .card .avail li{display:flex;align-items:center;gap:8px;padding:1px 0}
+  .card .avail .ok{color:#2e9e4f;font-size:16px}
+  .pdp{gap:24px;padding:4px 0 30px}
+  .pdp .gal{border:1px solid var(--fxline);border-radius:4px}
+  .buybox{background:#f4f4f4;padding:14px;align-self:start;color:#000}
+  .buybox .brandname{color:var(--navy);font-size:16px;margin-bottom:4px}
+  .buybox h1{font-size:24px;font-weight:600;color:#000;margin:0 0 6px}
+  .buybox .spec{color:var(--fxgrey);font-size:15px;margin-bottom:26px}
+  .pricerow{display:flex;justify-content:space-between;align-items:flex-end;padding:0 10px 16px}
+  .unitline{font-size:15px;color:var(--fxgrey);margin-bottom:10px}
+  .unitline b{color:#000;font-weight:600}
+  .unitline .was{color:#d0021b}
+  .bigprice{font-size:42px;font-weight:600;color:#242930;line-height:1}
+  .bigprice.sale{color:#d0021b}
+  .buybox .stepper{border:1px solid #ccc;background:#fff;border-radius:4px;display:inline-flex}
+  .buybox .stepper button{width:36px;height:38px;color:var(--navy);font-size:18px}
+  .dtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .dtabs div{background:#fff;border:1px solid #e3e3e3;text-align:center;padding:8px 6px;color:var(--navy);display:flex;flex-direction:column;font-size:12px}
+  .dtabs div b{font-size:15px;font-weight:600}
+  .dtabs div.on{border:2px solid var(--navy)}
+  .stockbox{background:#fff;padding:14px 12px}
+  .stock{display:flex;align-items:center;gap:8px;font-size:15px;color:#000;margin-bottom:12px}
+  .stock i{width:8px;height:8px;border-radius:50%;background:#2e9e4f;display:block}
+  .buybox .buy,.summary .buy{background:var(--fxblue);border-radius:4px;height:42px;font:400 16px "Barlow",sans-serif;letter-spacing:0;text-transform:none}
+  .buybox .buy:hover,.summary .buy:hover{background:#2450d8}
+  .stockbox .dl{display:block;color:var(--navy);font-size:14px;margin-top:12px;text-decoration:underline;cursor:default}
+  .inbasket{color:#2e7d32}
+  .acc2{border:1px solid var(--fxline);margin-top:12px}
+  .acc2 summary{font-size:16px;font-weight:600;text-transform:none;color:#000}
+  .acc2 summary .mi{color:#000}
+  .alt h4{font-size:22px;font-weight:600;text-transform:none;color:#1d2f54;margin:10px 0 0}
+  .co h1{font-size:30px;font-weight:600;color:#1d2f54}
+  .lines,.summary{border:1px solid var(--fxline);border-radius:4px}
+  .line .nm{font-size:16px;font-weight:600;color:var(--navy)}
+  .line .lt{color:var(--navy);font-weight:600}
+  .summary{top:150px}
+  .summary h2{font-size:18px;font-weight:600;text-transform:none}
+  .done h1{color:#1d2f54;font-weight:600}
+  .done .tick{background:#2e9e4f}
+  .empty .buy{background:var(--fxblue);border-radius:4px}
+  .drawer a{font-weight:600;color:var(--navy)}
+  .card .addrow{display:flex;justify-content:flex-end;margin-top:2px}
+  .card .add{border:0;background:var(--fxblue);color:#fff;border-radius:4px;width:44px;height:38px}
+  .card .add:hover{background:#2450d8}
+  .card .add.on{background:#2450d8;color:#fff}
+  .card .add .mi{font-size:22px}
+  .card .add .q{background:var(--navy);border:2px solid #fff;top:-10px;right:-10px;border-radius:50%;min-width:22px;height:22px;padding:0 4px;display:flex;align-items:center;justify-content:center}
+  .line .stepper button{color:var(--navy)}
+  .back{color:var(--navy)}
+  .summary .row.total{font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="drawer-bg" onclick="document.body.classList.remove('menu-open')"></div>
+<aside class="drawer" id="drawer"></aside>
+
+<header class="fx">
+  <div class="topbar"><div class="wrap"><span>groceriestogo.dk</span><span>Groceries ToGo at home</span><span>Groceries ToGo plus</span><span class="sp"></span><span>About us</span><span>Customer service</span></div></div>
+  <div class="wrap bar">
+    <a class="logo" href="#/" aria-label="Groceries ToGo"><span class="badgelogo">groceries<br>togo</span></a>
+    <form class="search" id="searchform" autocomplete="off" role="search">
+      <input id="q" placeholder="Search more than 35,000 products" aria-label="Search" aria-autocomplete="list" aria-controls="qac" spellcheck="false">
+      <span class="clear mi" id="qclear" title="Clear" data-i="close"></span>
+      <button class="go" type="submit" aria-label="Search"><span class="mi" data-i="search"></span></button>
+      <ul class="qac" id="qac" role="listbox"></ul>
+    </form>
+    <div class="spacer"></div>
+    <button class="hbtn" onclick="document.body.classList.add('menu-open')">Menu</button>
+    <button class="cart" onclick="go('#/basket')"><span class="mi" data-i="shopping_cart"></span><span id="cartlabel">Basket</span><span class="badge" id="badge">0</span></button>
+  </div>
+</header>
+
+<div class="rp-bg" id="rpbg"></div>
+<aside class="rp" id="rp">
+  <h2>Researcher panel <button type="button" id="rpclose">×</button></h2>
+  <p class="rp-hint">Hidden from participants. Open with <b>Ctrl + Shift + E</b> or by adding <b>?admin</b> to the address.</p>
+  <label>Participant ID <input id="rp-pid" placeholder="e.g. P01"></label>
+  <label>Condition
+    <select id="rp-cond">
+      <option value="eco-top">Sustainable first – sustainable suggestions ranked at the top</option>
+      <option value="eco-bottom">Sustainable last – sustainable suggestions ranked at the bottom</option>
+      <option value="as-listed">Mixed – sustainable and regular suggestions in the order written below</option>
+      <option value="control">Control – no sustainable suggestions</option>
+    </select></label>
+  <label class="rp-row"><input type="checkbox" id="rp-hl"> Highlight sustainable suggestions (green #56C02B background, 15%)</label>
+  <label class="rp-row"><input type="checkbox" id="rp-badge"> Show leaf icon next to sustainable suggestions</label>
+  <p class="rp-hint" id="rp-lock"></p>
+  <label>Max suggestions shown <input id="rp-max" type="number" min="1" max="10" style="width:70px"></label>
+  <label>Suggestion lists
+    <textarea id="rp-sugg" spellcheck="false"></textarea></label>
+  <p class="rp-hint">One line per search term: <code>term: suggestion | *sustainable suggestion | …</code><br>A <b>*</b> at the start marks a suggestion as sustainable. Suggestions are matched as the participant types (e.g. "wat" → the water bottle line).</p>
+  <div class="rp-btns">
+    <button type="button" id="rp-save" class="primary">Save &amp; start new session</button>
+    <button type="button" id="rp-defaults">Restore default lists</button>
+    <button type="button" id="rp-dl">Download current session data</button>
+  </div>
+  <p class="rp-hint" id="rp-status"></p>
+</aside>
+<div class="added" id="added"><span class="mi" data-i="check_circle"></span><span id="addedtxt"></span></div>
+
+<div id="view"></div>
+
+
+<script>
+/* SITE LOCK: set per test site. null = development version with all options. */
+const LOCK={"site": "1", "cond": "control", "highlight": false, "label": "Control – no sustainable suggestions (Føtex style)"};
+const KEY=LOCK?'f'+LOCK.site:'fdev';
+/* ---------------- DATA ---------------- */
+const CATS = [
+  {slug:"food-storage",  name:"Food storage",  path:["Home & kitchen","Kitchen utensils","Kitchen containers"]},
+  {slug:"water-bottles", name:"Water bottles", path:["Home & kitchen","Lunch & on the go","Drinking bottles"]},
+  {slug:"lunch-boxes",   name:"Lunch boxes",   path:["Home & kitchen","Lunch & on the go","Lunch boxes"]},
+  {slug:"travel-mugs",   name:"Travel mugs",   path:["Home & kitchen","Lunch & on the go","Travel mugs"]}
+];
+// id, cat, name, brand, qty, unit, price, img, lead, description (\n\n = paragraph, lines starting "- " = bullets), was
+const P = [
+ // FOOD STORAGE
+ ["f1","food-storage","Arctic food storage box - 0.75 litre","Plast1","1 pc","15.00/pc",15,"d97138288e79eb4a2dc149f37e9ff38c","3 per pack","Practical, good-value food storage boxes. Safe for the fridge, freezer and dishwasher. Fight food waste and freeze your leftovers."],
+ ["f2","food-storage","Deli containers with lids 780 ml - 5-pack","","1 pc","45.00/pc",45,"0089c630234b9665ce600c17356750e3","5 per pack","5-pack of practical food storage boxes with lids. They are freezer and dishwasher safe and made of PP plastic."],
+ ["f3","food-storage","SmartStore Vision storage box - 3.5 litres","SmartStore","1 pc","75.00/pc",75,"f2457601-0548-47c7-b7fb-bd7835c5d49e","18 x 12.5 x 20 cm","SmartStore Vision is a series of airtight, modular food boxes that keep food dry and fresh – excellent for both dry storage and the fridge. The transparent lid makes it easy to see what's inside. The boxes come in several sizes and can be stacked. This 3.5-litre size is ideal for storing cereal, flour and other dry goods.\n\nYou can label the container by writing directly on it with an acrylic pen; the text is smudge-free and easily removed by washing. Withstands temperatures from -40 °C to +90 °C. Food safe. Dishwasher safe."],
+ ["f4","food-storage","Helsinki food storage - 1.4 litres","Plast Team","1 pc","21.00/pc",21,"dff158cb9044d1b1981e67b559568a66","Stackable food storage · 2 per pack","Stackable food storage with a capacity of 1.4 litres.\n\nThe Helsinki series consists of modular, stackable freezer boxes that give optimal storage in the freezer and fridge, and are also suitable for the microwave. The transparent boxes make it easy to see what's inside.\n\nThe product is approved for microwave use. Note that the lid must be lifted and/or removed from the base when used in the microwave."],
+ ["f5","food-storage","Hamburg food storage - 2.5 litres","Plast Team","1 pc","65.00/pc",65,"bcbd9ab2a5a210383f7f213e0dfea55b","Plastic storage box","Food storage for dry goods, 2.5 L. 13.5 x 13.5 x 25.3 cm, black lid."],
+ ["f6","food-storage","Sistema TakeAlongs food storage (950ml)","Sistema","1 pc","69.00/pc",69,"d1e05f696c44cfff2d42d06b0a5d59e6","3 per pack","With Quik Clik Seal™, TakeAlongs® lids click into place so you know the container is closed tightly and securely. Lid and base have grooves so they stack, taking up minimal space in the kitchen and fridge.\n\nThis pack contains 3 of the popular 950 ml Rectangle containers – easy to bring along when you eat lunch on the go. TakeAlongs are safe to use in the microwave and freezer. Wash by hand in warm soapy water, or on the top rack of the dishwasher.\n\nPhthalate-free. Contents: 950 ml x 3 in Royal Blue lid / Clear."],
+ ["f7","food-storage","Rotho Airtight Clic&Lock food storage - 800 ml","Rotho","1 pc","45.00/pc",45,"c427ca0f0d19853f0fa76167d4885ab5","800 ml","- 100% tight\n- Very good, robust quality\n- Proven safety lock with silicone seal\n- The wavy structure of the base keeps food dry\n- Nests inside each other to save space when not in use"],
+ ["f8","food-storage","Food storage box - white - 1.3 litres","Plast Team","1 pc","39.00/pc",39,"5d5172ac11d012eb7b583bc12fd4d40e","1.3 litres","For use in the microwave."],
+ ["f9","food-storage","Food storage - 800 ml","Plast Team","1 pc","7.00/pc",7,"c6ea116da92209716283d4e7eafb463d","Stackable food storage","Stackable food storage with a capacity of 0.8 litres.\n\nThe Helsinki series consists of modular, stackable freezer boxes that give optimal storage in the freezer and fridge, and are also suitable for the microwave. The transparent boxes make it easy to see what's inside.\n\nThe product is approved for microwave use. Note that the lid must be lifted and/or removed from the base when used in the microwave."],
+ ["f10","food-storage","Sistema Nest it storage box - 1 litre","Sistema","1 pc","99.00/pc",99,"df16edfb52508f9ecdca69fe9a289804","3 per pack","Meal Prep 3-pack, 1 L. Sistema® NEST IT™ meal prep containers make cooking a breeze. These practical, reusable containers let you easily separate your food, vegetables, fruit etc. so they stay fresher for longer, helping you and your family eat a more balanced diet.\n\nStackable to help you save valuable space in your kitchen. Safe in the dishwasher (top rack), fridge and freezer.\n\nPhthalate-free. Contents: 1 L x 3 in Leaf Green."],
+ // WATER BOTTLES
+ ["w1","water-bottles","Water bottle 450 ml - blue","Im Cute","1 pc","25.00/pc",25,"36f5877cb90fd74db934584b91f88c20","Incl. practical spout","The 450 ml blue water bottle from Im Cute is a practical and stylish way to carry drinks. Designed with a focus on function and light weight, it's ideal for school, sports and outings. The 450 ml capacity means you always have enough to drink at hand, and the blue colour adds a fresh, modern touch.\n\nMade of durable materials that withstand daily use. Easy to clean, and can be filled with water, juice or other favourite drinks."],
+ ["w2","water-bottles","Drinking bottle – 500 ml – several variants – assorted","","1 pc","12.00/pc",12,"23e0d56df0dc69d7ee1e0e36b2ac0c80","Assorted – a specific variant cannot be guaranteed","500 ml drinking bottle.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w3","water-bottles","High5 water bottle","High5","750 ml","56.00/L",42,"6331cf00-7c08-4b5c-aed9-9045015ecb5e","750 ml","The High5 drinking bottle is the ideal bottle for all kinds of sports. It holds 750 ml of water and fits most standard bicycle bottle cages. With its spout, it's easy and convenient to drink from during activity.\n\nMade from quality materials so it stays leak-tight without compromising on convenience. BPA and phthalate free."],
+ ["w4","water-bottles","DAY motivation bottle - 900 ml – several variants – assorted","DAY","1 pc","40.00/pc",40,"cce66538de4a3d09395328927221ce9d","Assorted – a specific variant cannot be guaranteed","Motivational water bottle designed to help you track and encourage drinking enough throughout the day.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w5","water-bottles","Quick Flip drinking bottle - 520 ml - several variants - assorted","Sistema","1 pc","99.00/pc",99,"f24e2440687065a852cd2137383909da","Assorted – a specific variant cannot be guaranteed","Tritan Quick Flip from Sistema is a bestseller among schoolchildren. Made of super-strong, shatterproof and scratch-resistant Tritan plastic.\n\nThe bottle has a flip lid with a small push button – one press and a silicone straw pops up, making it easy to drink from, for example during sports or bike rides. Tritan is very impact resistant, crystal clear (looks like glass) and does not affect taste. The bottle comes apart for easy cleaning.\n\nDishwasher and freezer safe. 100% phthalate free. Contents: 520 ml.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w6","water-bottles","Motivation bottle - 500 ml - several variants - assorted","DAY","1 pc","40.00/pc",40,"01972b5f7bf9e0f17ece8ec8194eb322","Assorted – a specific variant cannot be guaranteed","Motivational water bottle designed to help you track and encourage drinking enough throughout the day.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w7","water-bottles","Water bottle (700ml) - several variants - assorted","","1 pc","25.00/pc",25,"b462716e7b80f14ca293e0500a3f8c9b","Assorted – a specific variant cannot be guaranteed","NOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w8","water-bottles","Sistema Hydrate Wave bottle - 600 ml - several variants - assorted","Sistema","1 pc","59.00/pc",59,"b70f123ae7f18c81facb3c383221fe8b","Assorted – a specific variant cannot be guaranteed","The smart 600 ml Wave Bottle from Sistema, with a decorative wave pattern, is a good-sized bottle for school and leisure activities. The patented Twist 'n' Sip lid makes the spout slide up with a light twist of the top.\n\nA nice design and great colours make this bottle popular with young people. Available in Ocean Blue, Minty Teal and Misty Purple.\n\nDishwasher and freezer safe. 100% phthalate free. Contents: 600 ml.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["w9","water-bottles","Paw Patrol water bottle - 420 ml","Stor","1 pc","89.00/pc",89,"252fc336779628b754b12a02ff674f13","Incl. practical spout with straw","The Paw Patrol water bottle opens with a screw lid and has a practical spout with a straw that flips up. The lid has a loop so the bottle can be clipped onto a school bag or similar. Holds 420 ml and measures 18 x 6 cm."],
+ ["w10","water-bottles","Jas & Mika drinking bottle - 750 ml","Peepz","1 pc","119.00/pc",119,"c30d8447254c7076df35bd94b78833b9","750 ml","A drinking bottle with Jas & Mika's well-known pattern and a design that makes it fun to remember to drink water. It is 24 cm tall with a circumference of 23.5 cm. The smart click closure makes it easy to open and close the bottle with one hand."],
+ // LUNCH BOXES
+ ["l1","lunch-boxes","Lunch box w. 3 compartments (1.7L)","","1 pc","79.00/pc",79,"ac415bfac52102d2f9ddedcfb216d96e","1.7 litres","Lunch box with 3 compartments. Holds 1.7 L."],
+ ["l2","lunch-boxes","Jas & Mika lunch box - 1.3 litres","Peepz","1 pc","149.00/pc",149,"35a5fddefa1fdc8b090d15cb65bd625f","Size: 15 x 21 x 5 cm","Make the packed lunch more fun with a Jas & Mika lunch box, featuring the well-known pattern with, among others, Baloo on the lid – perfect for school and outings. It measures 15 x 21 cm and is 5 cm deep."],
+ ["l3","lunch-boxes","Lunch box (450ml) - several variants - assorted","","1 pc","10.00/pc",10,"f4851c4944ec4757a5ce6c4863f9f1d5","Assorted – a specific variant cannot be guaranteed","Size: 14.5 x 11 x 7 cm\n450 ml\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["l4","lunch-boxes","Tupperware lunch box 1 litre - Roots","Tupperware Essentials","1 pc","79.00/pc",79,"0d5de07ade4f1c6e8d68febcb5d552b8","Ideal for storing food in the fridge","The Tupperware rectangular 1-litre lunch box in the colour Roots is a practical, functional storage solution for packed lunches, leftovers and everyday food storage. The rectangular shape makes it easy to stack and uses space efficiently in both the fridge and your bag.\n\nMade of durable, food-safe plastic for safe storage and long life in daily use. The tight-fitting lid helps keep food fresh and protects the contents during transport.\n\n- Capacity: 1 litre\n- Colour: Roots\n- Material: food-safe plastic\n- Use: food storage in the fridge and for packed lunches"],
+ ["l5","lunch-boxes","Salling lunch box w. 2 compartments – several variants – assorted","Salling","1 pc","79.00/pc",79,"cbe8731c438f314358885d1ea5215a29","Assorted – a specific variant cannot be guaranteed","This functional lunch box is designed for everyday life, where durability and practical separation matter. It has two separate compartments, making it easy to keep food apart – perfect for lunch, snacks or leftovers.\n\nThe inside is stainless steel – hard-wearing, hygienic and easy to clean. The outside is robust plastic, giving a light design and a good grip in your bag. Ideal for both children and adults, for school, work and outings.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["l6","lunch-boxes","Snack boxes 3-in-1 - Paw Patrol","","1 pc","59.00/pc",59,"d434579b4eb30357b74e7cb494e92141","Ideal for outings or packed lunches","A PAW Patrol 3-in-1 snack box set from the Fresh Bites collection. The set consists of three snack boxes in different sizes – ideal for taking fruit, snacks or sandwiches to school, on the go or on outings. Each box is decorated with the popular PAW Patrol heroes.\n\nThanks to the secure closure the contents are stored safely, and as the boxes nest inside each other they are easy to store.\n\nNot suitable for the dishwasher, microwave or oven."],
+ ["l7","lunch-boxes","Tupperware lunch box 550 ml - Cornish","Tupperware","1 pc","59.00/pc",59,"73d834e76aa1cc8ba7f969c61a22447b","Ideal for storing food in the fridge","The Tupperware square 550 ml lunch box in the colour Cornish is a compact, functional storage solution for smaller portions, snacks or packed lunches. The square shape makes it easy to stack in both the fridge and your bag.\n\nMade of durable, food-safe plastic. The tight-fitting lid helps keep food fresh and protects the contents during transport.\n\n- Capacity: 550 ml\n- Colour: Cornish\n- Material: food-safe plastic\n- Use: food storage in the fridge and for packed lunches"],
+ ["l8","lunch-boxes","Lunch box 1.8L - Christmas design","","1 pc","39.00/pc",39,"8807f1450c273cacc9a46ba226959427","Divided into 3 compartments","Lunch box with a Christmas design and 3 different compartments, making it easy and practical to organise your food.\n\nL: 20 x W: 15 x H: 6 cm"],
+ ["l9","lunch-boxes","Lunch box - several variants - assorted","","1 pc","19.00/pc",19,"ac1fe4f1967ac7cc7e9cee08b701e91b","Assorted – a specific variant cannot be guaranteed","Size: 15 x 15.5 x 9.5 cm\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["l10","lunch-boxes","Thermal food container 400 ml","","1 pc","69.00/pc",69,"07877d81e1c7a3ed08bc34db339d3054","Assorted – a specific variant cannot be guaranteed","Take your breakfast or lunch on the go and enjoy it when it suits you. The container holds 400 ml and is designed for storing and transporting both hot and cold food – e.g. porridge, yoghurt, soup, fruit and other small meals for work, school or trips.\n\nIt helps keep food hot or cold for longer and has a tight-fitting lid. At the top is a separate, transparent compartment for muesli, fruit, nuts or other toppings, so you can add them just before eating. The lid also holds a folding plastic spoon. Hand wash only – not dishwasher safe.\n\n- Capacity: 400 ml\n- Separate transparent compartment for toppings\n- Incl. folding plastic spoon with storage compartment\n- Hand wash only\n- Colours: beige and green (assorted)"],
+ // TRAVEL MUGS
+ ["m1","travel-mugs","Travel mug - 450 ml - several variants - assorted","DAY","1 pc","39.00/pc",39,"afb4d2329054c3f84ca7c591f152d39e","Assorted – a specific variant cannot be guaranteed","- Capacity: 0.45 l\n- Dishwasher safe: No\n- Leak-proof: Yes\n- Size: 8.6 x 6.2 x 19 cm\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed."],
+ ["m2","travel-mugs","Tefal travel mug - 360 ml - green","Tefal","1 pc","199.00/pc",199,"999fa156b3f722bd1d080a9811860112","0.36 litres. Keeps drinks hot for 4 hours and cold for 8","Tefal's Travel Mug Twist is a 0.36 l travel mug. It keeps drinks hot for up to 4 hours and cold for up to 8 hours, and has a soft silicone surface that is comfortable to hold and gives a good grip. With one press of a button you can drink from all sides of the mug. Its 100% leak-proof design means you don't have to worry about spills in your bag. Dishwasher safe and easy to clean, as the lid comes apart in two parts.\n\n- Opens and closes with one press of a button\n- Keeps drinks hot for 4 hours and cold for 8 hours\n- Dishwasher safe\n- Leak-proof – easy to carry in a car or bag\n- Drink from any side of the mug"],
+ ["m3","travel-mugs","Tefal travel mug - 360 ml - blue","Tefal","1 pc","199.00/pc",199,"cf4733a5a30067f7c0ea965b727f42b7","0.36 litres. Keeps drinks hot for 4 hours and cold for 8","Tefal's Travel Mug Twist is a 0.36 l travel mug. It keeps drinks hot for up to 4 hours and cold for up to 8 hours, and has a soft silicone surface that is comfortable to hold and gives a good grip. With one press of a button you can drink from all sides of the mug. Its 100% leak-proof design means you don't have to worry about spills in your bag. Dishwasher safe and easy to clean, as the lid comes apart in two parts.\n\n- Opens and closes with one press of a button\n- Keeps drinks hot for 4 hours and cold for 8 hours\n- Dishwasher safe\n- Leak-proof – easy to carry in a car or bag\n- Drink from any side of the mug"],
+ ["m4","travel-mugs","Tefal travel mug - 500 ml - black","Tefal","1 pc","249.00/pc",249,"dd510bf9e4cdb15710f2d50bb1ef0e3f","0.5 litres. Keeps drinks hot for 4 hours and cold for 8","Tefal's Travel Mug Classic is a 0.5 l travel mug. It keeps drinks hot for up to 4 hours and cold for up to 8 hours, and has a soft silicone surface that is comfortable to hold and gives a good grip. With one press of a button you can drink from all sides of the mug. Its 100% leak-proof design means you don't have to worry about spills in your bag. Dishwasher safe and easy to clean, as the lid comes apart in two parts.\n\n- Opens and closes with one press of a button\n- Keeps drinks hot for 4 hours and cold for 8 hours\n- Dishwasher safe\n- Leak-proof – easy to carry in a car or bag\n- Drink from any side of the mug"],
+ ["m5","travel-mugs","Salling travel mug - grey","Salling","1 pc","20.95/pc",20.95,"07a618efb8df829817414aba090d250d","450 ml","The Salling 450 ml travel mug is ideal for keeping your drinks hot or cold for longer. The practical design and tight-fitting lid make it easy to take with you. Use it for coffee, tea or other drinks on the go."],
+ ["m6","travel-mugs","Bodum travel mug 35 cl","Bodum","1 pc","83.30/pc",83.30,"10daa18920731b2943ced44fad0e6163","Exclusive colour – only available here","The Bodum travel mug suits the daily commute, holidays, the gym or a walk. It makes it easy to take coffee, tea and other hot or cold drinks on the go.\n\nThe double-walled, insulating construction helps keep your drink's temperature for longer, while the outside stays comfortable to hold, even with a hot drink. Made of stainless steel with a drinking lid, so you can drink directly from the mug.\n\nThe colour Sand was developed exclusively for Groceries ToGo.\n\n- For hot and cold drinks\n- Double-walled, insulating construction\n- Materials: stainless steel, plastic, rubber and silicone\n- Lid with drinking opening\n- Easy to clean",119],
+ ["m7","travel-mugs","Fiskars To Go travel mug - orange","Fiskars","1 pc","199.00/pc",199,"cd3dea6cc4964ea7d492c440f28097e6","0.5 litres. Perfect for the car's cup holder","The To Go travel mug is the perfect choice if you want to enjoy hot or cold drinks on the go – whether in the car, relaxing on the terrace or working at your desk. It holds 0.5 litres and is double insulated, so your drink keeps its temperature longer. The ergonomic grip makes it comfortable to hold.\n\nPlease note that the transparent lid is not leak-proof, so the mug is not suitable for carrying in a bag or backpack.\n\n- Ergonomic grip\n- Capacity: 0.5 litres\n- Double insulated\n- Transparent lid (not leak-proof)"],
+ ["m8","travel-mugs","Fiskars To Go travel mug - black","Fiskars","1 pc","199.00/pc",199,"6f10e6a50e809088fa66dee6187d4e1d","0.5 litres. Perfect for the car's cup holder","The To Go travel mug is the perfect choice if you want to enjoy hot or cold drinks on the go – whether in the car, relaxing on the terrace or working at your desk. It holds 0.5 litres and is double insulated, so your drink keeps its temperature longer. The ergonomic grip makes it comfortable to hold.\n\nPlease note that the transparent lid is not leak-proof, so the mug is not suitable for carrying in a bag or backpack.\n\n- Ergonomic grip\n- Capacity: 0.5 litres\n- Double insulated\n- Transparent lid (not leak-proof)"],
+ ["m9","travel-mugs","Salling insulated cup with straw - 1.2 litres","Salling","1 pc","79.00/pc",79,"8b1d50713244a4858c0786a1e99eaa57","Keeps drinks cold/hot for up to 6–8 hours","This robust, roomy insulated cup holds 1200 ml and is perfect for keeping drinks hot or cold for longer. Made of stainless steel, and the double-walled insulation keeps drinks hot or cold for up to 6–8 hours. It has a practical carry handle and a tight-fitting lid with an integrated straw. Not dishwasher safe, but easy to clean by hand.\n\n- Capacity: 1200 ml\n- Double-walled insulation, up to 8 hours\n- Tight-fitting lid and carry handle\n- Straw included\n- Size: 26.5 x 10 x 7.4 cm"],
+ ["m10","travel-mugs","Thermos JMY travel mug - 350 ml","Thermos","1 pc","249.00/pc",249,"1d34cd31f8cdb9bfb300dcb6fc2b385e","For both cold and hot drinks","Thermos JMY 350 ml is a smart mix of a small vacuum flask and a travel mug, made of stainless steel with a drinking lid. Suitable for both cold and hot drinks.\n\nWe recommend preheating the flask with hot tap water before filling it with your drink. A practical size that doesn't take up much space – easy to bring in a school bag, the car or on the go. Hand wash, including before first use."]
+];
+const PRODUCTS = P.map(p=>({id:p[0],cat:p[1],name:p[2],brand:p[3],qty:p[4],unit:p[5],price:p[6],img:p[7],lead:p[8],desc:p[9],was:p[10]}));
+const BY_ID = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
+const IMG = (id,w=500)=>`https://digitalassets.sallinggroup.com/image/upload/e_trim:2,e_sharpen:80,q_auto,f_auto,b_white,w_${w},h_${w},c_pad/t_DigitalAiLogo/${id}`;
+
+/* ---------------- ICONS ---------------- */
+const ICONS={
+ menu:"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+ person:"M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+ shopping_cart:"M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z",
+ add_shopping_cart:"M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z",
+ search:"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+ chevron_right:"M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+ chevron_left:"M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+ expand_more:"M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z",
+ phone:"M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z",
+ chat_bubble:"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z",
+ check_circle:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+close:"M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
+ check:"M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+ eco:"M6.05 8.05a7.007 7.007 0 0 0 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.88-7.32-2.63 1.36-4.84 3.42-6.38 5.94a5.003 5.003 0 0 1 .44-6.43C9.81 7.08 14.2 6.4 17.95 6.05c-.35 3.75-1.03 8.14-3.41 10.49z"
+};
+const icon=n=>`<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="${ICONS[n]||''}"/></svg>`;
+const paintIcons=(root=document)=>root.querySelectorAll('.mi[data-i]').forEach(e=>{if(!e.firstChild)e.innerHTML=icon(e.dataset.i)});
+
+/* ---------------- STATE ---------------- */
+const store={get(k,d){try{return JSON.parse(sessionStorage.getItem(KEY+'_'+k))??d}catch(e){return d}},set(k,v){try{sessionStorage.setItem(KEY+'_'+k,JSON.stringify(v))}catch(e){}}};
+let basket=store.get('bt_basket',{});         // {id: qty}
+let log=store.get('bt_log',[]);                // session events for the researcher
+let started=store.get('bt_start',Date.now()); store.set('bt_start',started);
+function track(ev,data={}){log.push({t:Date.now()-started,ev,...data,route:location.hash||'#/'});store.set('bt_log',log)}
+function save(){store.set('bt_basket',basket);updateCart()}
+function setQty(id,q,source){const before=basket[id]||0;q=Math.max(0,q);if(q===0)delete basket[id];else basket[id]=q;save();track(q>before?'add':'remove',{id,qty:q,source})}
+const count=()=>Object.values(basket).reduce((a,b)=>a+b,0);
+const total=()=>Object.entries(basket).reduce((s,[id,q])=>s+BY_ID[id].price*q,0);
+
+/* ---------------- HELPERS ---------------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const big=v=>Number.isInteger(v)?v+",-":v.toFixed(2).replace('.',',');
+const kr=v=>v.toFixed(2).replace('.',',')+" kr.";
+const meta=p=>(p.brand?`<span class="brand">${esc(p.brand)}</span> | `:"")+`${esc(p.qty)} | ${esc(p.unit)}`+(p.was?` | <span class="was">before ${p.was.toFixed(2)}</span>`:"");
+const priceCls=p=>"price"+(Number.isInteger(p.price)?"":" dec")+(p.was?" sale":"");
+const cat=s=>CATS.find(c=>c.slug===s);
+function go(h){location.hash=h}
+function flash(txt){const a=document.getElementById('added');document.getElementById('addedtxt').textContent=txt;a.classList.add('show');clearTimeout(flash.t);flash.t=setTimeout(()=>a.classList.remove('show'),1800)}
+function updateCart(){const n=count(),b=document.getElementById('badge');b.textContent=n;b.style.display=n?'block':'none';document.getElementById('cartlabel').innerHTML=n?`Basket`:'Basket';
+  document.querySelectorAll('.add[data-id]').forEach(btn=>{const q=basket[btn.dataset.id]||0;btn.classList.toggle('on',q>0);btn.querySelector('.q').style.display=q?'block':'none';btn.querySelector('.q').textContent=q})}
+
+function card(p){return `<article class="card" data-go="#/p/${p.id}">
+  <div class="img"><img loading="lazy" src="${IMG(p.img)}" alt=""></div>
+  <h2>${esc(p.name)}</h2>
+  <div class="spec">${p.brand?esc(p.brand)+' · ':''}${esc(p.qty)}</div>
+  <div class="prow"><span class="ship">${p.was?`<span class="was">Before ${p.was.toFixed(2).replace('.',',')}</span>`:'Plus delivery if applicable'}</span><span class="fprice${p.was?' sale':''}">${big(p.price)}</span></div>
+  <div class="unit">${esc(p.unit.replace('/',' / '))}</div>
+  <div class="addrow"><button class="add" data-id="${p.id}" aria-label="Add to basket"><span class="mi" data-i="add_shopping_cart"></span><span class="q" style="display:none">0</span></button></div>
+</article>`}
+function crumbs(items){return '';return `<div class="crumbs">`+items.map((it,i)=>i<items.length-1?`<a href="${it[1]||'#/'}">${esc(it[0])}</a><span class="mi sep" data-i="chevron_right"></span>`:`<span class="cur">${esc(it[0])}</span>`).join('')+`</div>`}
+function descHTML(t){return t.split('\n\n').map(block=>{const lines=block.split('\n');if(lines.every(l=>l.startsWith('- ')))return '<ul>'+lines.map(l=>`<li>${esc(l.slice(2))}</li>`).join('')+'</ul>';return '<p>'+lines.map(esc).join('<br>')+'</p>'}).join('')}
+
+/* ---------------- VIEWS ---------------- */
+function viewCategory(slug){
+  const c=cat(slug)||CATS[0]; const items=PRODUCTS.filter(p=>p.cat===c.slug);
+  return crumbs([["Home"],...c.path.map(x=>[x,`#/c/${c.slug}`]),[c.name]]).replace(/<a href="[^"]*">(Home &amp; kitchen|Kitchen utensils|Kitchen containers|Lunch &amp; on the go|Drinking bottles|Lunch boxes|Travel mugs)<\/a>/g,'<a>$1</a>')+
+  `<main class="page"><h1 class="ph">${esc(c.name)}</h1><div class="count">${items.length} items</div><div class="grid">${items.map(card).join('')}</div></main>`;
+}
+function viewProduct(id){
+  const p=BY_ID[id]; if(!p) return viewCategory(CATS[0].slug);
+  const c=cat(p.cat); const alts=PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,4);
+  const q=basket[p.id]||0;
+  return crumbs([["Home","#/"],[c.name,`#/c/${c.slug}`],[p.name]])+
+  `<main class="page"><div class="pdp">
+    <div class="gal"><img src="${IMG(p.img,900)}" alt="${esc(p.name)}"></div>
+    <div class="buybox">
+      <div class="brandname">${esc(p.brand||'Groceries ToGo')}</div>
+      <h1>${esc(p.name)}</h1>
+      <div class="spec">${esc(p.qty)}</div>
+      <div class="pricerow">
+        <div><div class="unitline"><b>${esc(p.qty)}</b> | ${esc(p.unit.replace('/',' / '))}${p.was?` | <span class="was">Before ${p.was.toFixed(2).replace('.',',')}</span>`:''}</div>
+        <div class="stepper"><button data-step="-1" aria-label="Decrease">−</button><span id="pq">1</span><button data-step="1" aria-label="Increase">+</button></div></div>
+        <div class="bigprice${p.was?' sale':''}">${big(p.price)}</div>
+      </div>
+      <div class="dtabs"><div class="on"><b>DELIVERY</b><span>Get the product delivered</span></div><div><b>CLICK&amp;COLLECT</b><span>Collect after 2 hours</span></div></div>
+      <div class="stockbox">
+        <div class="stock"><i></i>In stock online (5+)</div>
+        <button class="buy" id="buy">Add to basket</button>
+        <div class="inbasket" id="inb">${q?`${q} in your basket · <a href="#/basket">Go to basket</a>`:''}</div>
+        <a class="dl">See delivery options and prices</a>
+      </div>
+      <div class="acc2">
+        <details open><summary>Description<span class="mi" data-i="expand_more"></span></summary><div class="body"><p><b>${esc(p.lead)}</b></p>${descHTML(p.desc)}</div></details>
+        <details><summary>Product details<span class="mi" data-i="expand_more"></span></summary><div class="body"><table>
+          <tr><td>Brand</td><td>${esc(p.brand||'–')}</td></tr><tr><td>Category</td><td>${esc(c.name)}</td></tr><tr><td>Quantity</td><td>${esc(p.qty)}</td></tr><tr><td>Unit price</td><td>${esc(p.unit)}</td></tr></table></div></details>
+        <details><summary>Specifications<span class="mi" data-i="expand_more"></span></summary><div class="body"><p>See the description for size and care information.</p></div></details>
+        <details><summary>Manufacturer and importer information<span class="mi" data-i="expand_more"></span></summary><div class="body"><p>${esc(p.brand||'Not specified')}</p></div></details>
+      </div>
+    </div>
+  </div>
+  <div class="alt"><h4>Similar products</h4><div class="grid">${alts.map(card).join('')}</div></div>
+  </main>`;
+}
+function viewBasket(){
+  const ids=Object.keys(basket);
+  const head=crumbs([["Home","#/"],["Basket"]]);
+  if(!ids.length) return head+`<main class="page"><div class="co" style="grid-template-columns:1fr"><div><h1>Your basket</h1><div class="empty">Your basket is empty.<br><button class="buy" onclick="go('#/c/${CATS[0].slug}')">CONTINUE SHOPPING</button></div></div></div></main>`;
+  const n=count(), t=total();
+  return head+`<main class="page"><div class="co">
+    <div><h1>Your basket (${n} ${n===1?'item':'items'})</h1><div class="lines">${ids.map(id=>{const p=BY_ID[id],q=basket[id];return `
+      <div class="line">
+        <img src="${IMG(p.img,200)}" alt="" data-go="#/p/${p.id}">
+        <div><div class="nm" data-go="#/p/${p.id}">${esc(p.name)}</div><div class="meta">${meta(p)}</div><button class="rm" data-rm="${p.id}">Remove</button></div>
+        <div class="stepper"><button data-line="${p.id}" data-d="-1" aria-label="Decrease">−</button><span>${q}</span><button data-line="${p.id}" data-d="1" aria-label="Increase">+</button></div>
+        <div class="lt">${kr(p.price*q)}</div>
+      </div>`}).join('')}</div>
+      <a class="back" href="#/c/${CATS[0].slug}"><span class="mi" data-i="chevron_left"></span>Continue shopping</a>
+    </div>
+    <aside class="summary">
+      <h2>Order summary</h2>
+      <div class="row"><span>Items (${n})</span><span>${kr(t)}</span></div>
+      <div class="row"><span>Delivery</span><span>0,00 kr.</span></div>
+      <div class="row total"><span>Total</span><span>${kr(t)}</span></div>
+      <div class="note">Incl. VAT ${kr(t*0.2)}</div>
+      <button class="buy" id="paybtn">PAY ${kr(t)}</button>
+    </aside>
+  </div></main>`;
+}
+function viewDone(){
+  const order=store.get('bt_order',null);
+  if(!order) return viewBasket();
+  return `<main class="page"><div class="done">
+    <div class="tick"><span class="mi" data-i="check"></span></div>
+    <h1>Thank you for your order</h1>
+    <p>The test is now complete. Please let the facilitator know you are finished.</p>
+    <table>${order.lines.map(l=>`<tr><td>${l.qty} × ${esc(BY_ID[l.id].name)}</td><td>${kr(l.qty*BY_ID[l.id].price)}</td></tr>`).join('')}
+      <tr><td><b>Total</b></td><td>${kr(order.total)}</td></tr></table>
+    <div class="researcher">
+      <button id="copylog">Copy session data (researcher)</button>
+      <button id="dllog">Download session data</button>
+      <button id="reset">Start new session</button>
+    </div>
+  </div></main>`;
+}
+
+/* ---------------- SEARCH: product keywords ---------------- */
+// Extra keywords per product (only attributes that are true for the product)
+const TAGS={
+ f1:"container box food storage freezer reusable leftovers food waste dishwasher",f2:"container box food storage freezer deli dishwasher pp plastic",
+ f3:"container box food storage airtight dry goods stackable dishwasher",f4:"container box food storage stackable freezer microwave",
+ f5:"container box food storage dry goods",f6:"container box food storage lunch phthalate-free stackable microwave freezer",
+ f7:"container box food storage airtight silicone",f8:"container box food storage microwave",f9:"container box food storage stackable freezer microwave",
+ f10:"container box food storage meal prep phthalate-free stackable",
+ w1:"water bottle drinking bottle reusable kids school",w2:"water bottle drinking bottle reusable",w3:"water bottle drinking bottle reusable sport bpa-free cycling",
+ w4:"water bottle drinking bottle reusable motivation",w5:"water bottle drinking bottle reusable kids school straw phthalate-free tritan",
+ w6:"water bottle drinking bottle reusable motivation",w7:"water bottle drinking bottle reusable",w8:"water bottle drinking bottle reusable school phthalate-free",
+ w9:"water bottle drinking bottle reusable kids school straw",w10:"water bottle drinking bottle reusable kids",
+ l1:"lunch box lunchbox container compartments",l2:"lunch box lunchbox container kids school",l3:"lunch box lunchbox container",
+ l4:"lunch box lunchbox container food storage tupperware",l5:"lunch box lunchbox container compartments stainless steel adults school work",
+ l6:"lunch box lunchbox container snack kids school",l7:"lunch box lunchbox container food storage tupperware",l8:"lunch box lunchbox container compartments christmas",
+ l9:"lunch box lunchbox container",l10:"lunch box lunchbox container thermal hot food",
+ m1:"travel mug thermos coffee to go leak-proof",m2:"travel mug thermos coffee to go leak-proof dishwasher",m3:"travel mug thermos coffee to go leak-proof dishwasher",
+ m4:"travel mug thermos coffee to go leak-proof dishwasher",m5:"travel mug thermos coffee to go",m6:"travel mug thermos coffee to go stainless steel",
+ m7:"travel mug thermos coffee to go",m8:"travel mug thermos coffee to go",m9:"travel mug thermos cup straw stainless steel",m10:"travel mug thermos flask stainless steel"
+};
+const STOP=new Set(["a","an","and","the","for","with","of","to","in","set"]);
+const norm=t=>t.toLowerCase().replace(/[^a-z0-9æøå\- ]+/g," ").replace(/\s+/g," ").trim();
+const stem=w=>w.length>4&&w.endsWith("es")&&!w.endsWith("ses")?w.slice(0,-2):w.length>3&&w.endsWith("s")&&!w.endsWith("ss")?w.slice(0,-1):w;
+const tokens=t=>norm(t).split(" ").filter(w=>w&&!STOP.has(w)).map(stem);
+const INDEX=PRODUCTS.map(p=>({p,name:" "+tokens(p.name+" "+p.brand).join(" ")+" ",tags:" "+tokens(TAGS[p.id]||"").join(" ")+" ",desc:" "+tokens(p.lead+" "+p.desc).join(" ")+" "}));
+function searchProducts(q){
+  const qt=tokens(q); if(!qt.length) return [];
+  const scored=INDEX.map(x=>{let s=0,hit=0;for(const t of qt){const k=" "+t;let w=0;if(x.name.includes(k))w=3;else if(x.tags.includes(k))w=2;else if(x.desc.includes(k))w=1;s+=w;if(w)hit++}return {p:x.p,s,hit}}).filter(x=>x.s>0);
+  if(!scored.length) return [];
+  const best=Math.max(...scored.map(x=>x.s));
+  return scored.filter(x=>x.s>=best*0.5).sort((a,b)=>b.s-a.s||b.hit-a.hit).map(x=>x.p);
+}
+
+/* ---------------- QAC: suggestion lists & experimental settings ---------------- */
+// One line per search term. "*" marks a sustainable suggestion. Editable in the researcher panel.
+const DEFAULT_SUGG=`container: food storage containers | *glass food containers | plastic containers with lids | *reusable containers | airtight containers | freezer containers | *bpa-free containers | containers for lunch
+food storage: food storage boxes | *food storage glass | food storage bags | *food storage plastic-free | food storage containers set | *food storage recycled plastic | food storage freezer | food storage stackable
+water bottle: water bottle | *water bottle stainless steel | water bottle kids | *water bottle reusable | water bottle 1 litre | *water bottle bpa-free | water bottle sport | water bottle with straw
+lunch box: lunch box kids | *lunch box stainless steel | lunch box with compartments | *lunch box plastic-free | *lunch box bamboo | lunch box adults | lunch box for school
+travel mug: travel mug | travel mug leak-proof | *travel mug reusable | *travel mug stainless steel | travel mug to go | *travel mug recycled | thermos`;
+const settings=Object.assign({cond:"eco-top",badge:false,highlight:false,max:8,pid:"",sugg:DEFAULT_SUGG},(()=>{try{return JSON.parse(localStorage.getItem("gtg_settings_"+KEY))||{}}catch(e){return {}}})());
+(()=>{const u=new URLSearchParams(location.search);
+  if(u.get("cond"))settings.cond=u.get("cond"); if(u.get("pid"))settings.pid=u.get("pid");
+  if(u.has("badge"))settings.badge=u.get("badge")==="1"; if(u.get("max"))settings.max=+u.get("max");})();
+if(LOCK) Object.assign(settings,{cond:LOCK.cond,highlight:LOCK.highlight,badge:false});
+function saveSettings(){try{localStorage.setItem("gtg_settings_"+KEY,JSON.stringify(settings))}catch(e){}}
+function parseSugg(txt){
+  return txt.split("\n").map(l=>l.trim()).filter(l=>l&&l.includes(":")).map((l,li)=>{
+    const i=l.indexOf(":"); const seed=l.slice(0,i).trim().toLowerCase();
+    const items=l.slice(i+1).split("|").map(x=>x.trim()).filter(Boolean).map((x,j)=>({text:x.replace(/^\*/,"").trim(),eco:x.startsWith("*"),listPos:j+1}));
+    return {seed,items,li};
+  });
+}
+let SUGG=parseSugg(settings.sugg);
+function wordsPrefixMatch(text,input){
+  const tw=norm(text).split(" "), iw=norm(input).split(" ").filter(Boolean); if(!iw.length) return false;
+  // every typed word must match the start of a word in the suggestion (last word may be partial)
+  return iw.every((w,k)=>tw.some(x=>k===iw.length-1?x.startsWith(w):(x===w||stem(x)===stem(w)||x.startsWith(w))));
+}
+function getSuggestions(input){
+  const q=norm(input); if(!q) return [];
+  let out=[];
+  for(const set of SUGG){
+    const seedHit=set.seed.startsWith(q)||q.startsWith(set.seed)||wordsPrefixMatch(set.seed,q);
+    for(const it of set.items){
+      if(settings.cond==="control"&&it.eco) continue;
+      if(seedHit||wordsPrefixMatch(it.text,q)) out.push({...it,set:set.seed,prio:seedHit?0:1,li:set.li});
+    }
+  }
+  // de-duplicate by text
+  const seen=new Set(); out=out.filter(x=>{const k=norm(x.text);if(seen.has(k))return false;seen.add(k);return true});
+  // base order: best-matching list first, then the order written in that list
+  out.sort((a,b)=>a.prio-b.prio||a.li-b.li||a.listPos-b.listPos);
+  // pick the top N first, so every condition shows the SAME suggestions (control: sustainable ones removed and the list refilled)
+  out=out.slice(0,settings.max);
+  // experimental manipulation of the ranking (stable sort keeps the written order inside each group)
+  if(settings.cond==="eco-top") out.sort((a,b)=>(b.eco-a.eco));
+  if(settings.cond==="eco-bottom") out.sort((a,b)=>(a.eco-b.eco));
+  return out.map((x,i)=>({...x,pos:i+1}));
+}
+function hl(text,input){
+  // Google-style: what the participant typed is plain, the predicted completion is bold
+  const t=esc(text), q=norm(input);
+  // bold the typed letters where they start a word (as on Føtex)
+  const typed=input.trim(); if(!typed) return t;
+  const i=text.toLowerCase().search(new RegExp("(^|\\s)"+typed.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
+  if(i<0) return t;
+  const st=i===0&&text.toLowerCase().startsWith(typed.toLowerCase())?0:i+1;
+  return esc(text.slice(0,st))+"<b>"+esc(text.slice(st,st+typed.length))+"</b>"+esc(text.slice(st+typed.length));
+}
+
+/* ---------------- QAC: UI ---------------- */
+const qEl=document.getElementById("q"), qacEl=document.getElementById("qac"), formEl=document.getElementById("searchform");
+let cur=[], act=-1, typedAt=0, lastShownKey="";
+function drawQac(){
+  const val=qEl.value; formEl.classList.toggle("has-text",!!val);
+  cur=getSuggestions(val); act=-1;
+  if(!cur.length||document.activeElement!==qEl){qacEl.classList.remove("open");qacEl.innerHTML="";return}
+  qacEl.innerHTML=cur.map((s,i)=>`<li role="option" data-i="${i}"${settings.highlight&&s.eco?' class="eco-hl"':''}><span class="mi" data-i="search"></span><span>${hl(s.text,val)}</span>${settings.badge&&s.eco?'<span class="mi leaf" data-i="eco" title="Sustainable choice"></span>':''}</li>`).join("");
+  paintIcons(qacEl); qacEl.classList.add("open");
+  const key=val+"|"+cur.map(s=>s.text).join("|");
+  if(key!==lastShownKey){lastShownKey=key;track("qac_shown",{input:val,suggestions:cur.map(s=>({pos:s.pos,text:s.text,eco:s.eco}))})}
+}
+function setAct(i){act=i;[...qacEl.children].forEach((li,k)=>li.classList.toggle("act",k===i));if(i>=0)qEl.value=cur[i].text}
+let typedValue="";
+qEl.addEventListener("input",()=>{if(!typedAt)typedAt=Date.now();typedValue=qEl.value;track("keystroke",{input:qEl.value});drawQac()});
+qEl.addEventListener("focus",()=>{track("search_focus");drawQac()});
+qEl.addEventListener("blur",()=>setTimeout(()=>qacEl.classList.remove("open"),150));
+qEl.addEventListener("keydown",e=>{
+  if(!qacEl.classList.contains("open"))return;
+  if(e.key==="ArrowDown"){e.preventDefault();setAct(Math.min(cur.length-1,act+1))}
+  else if(e.key==="ArrowUp"){e.preventDefault();if(act<=0){act=-1;qEl.value=typedValue;setAct(-1)}else setAct(act-1)}
+  else if(e.key==="Escape"){qacEl.classList.remove("open");qEl.value=typedValue}
+  else if(e.key==="Enter"&&act>=0){e.preventDefault();pick(cur[act],"keyboard")}
+});
+qacEl.addEventListener("mousedown",e=>{const li=e.target.closest("li");if(li){e.preventDefault();pick(cur[+li.dataset.i],"mouse")}});
+function pick(s,how){
+  track("qac_select",{typed:typedValue,text:s.text,pos:s.pos,eco:s.eco,shown:cur.length,method:how,msSinceFirstKey:typedAt?Date.now()-typedAt:null});
+  qEl.value=s.text; submitSearch(s.text,"suggestion",s);
+}
+formEl.addEventListener("submit",e=>{e.preventDefault();const v=qEl.value.trim();if(!v)return;
+  const match=cur.find(s=>norm(s.text)===norm(v));
+  submitSearch(v,act>=0||match?"suggestion":"typed",match)});
+document.getElementById("qclear").addEventListener("click",()=>{qEl.value="";typedValue="";track("search_clear");qEl.focus();drawQac()});
+function submitSearch(v,source,s){
+  track("search_submit",{query:v,source,typed:typedValue,eco:s?s.eco:null,pos:s?s.pos:null});
+  qacEl.classList.remove("open");qEl.blur();typedAt=0;
+  go("#/s/"+encodeURIComponent(v));
+}
+function viewSearch(q){
+  const res=searchProducts(q);
+  track("search_results",{query:q,count:res.length,ids:res.map(p=>p.id)});
+  const head=crumbs([["Home","#/"],[`Search for “${q}”`]]);
+  if(!res.length) return head+`<main class="page"><h1 class="ph">Search results for ${esc(q)}</h1><div class="count">0 items</div><div class="noresults">We couldn't find any products matching <b>“${esc(q)}”</b>. Try another search, or browse the categories above.</div></main>`;
+  return head+`<main class="page"><h1 class="ph">Search results for ${esc(q)}</h1><div class="count">${res.length} ${res.length===1?"item":"items"}</div><div class="grid">${res.map((p,i)=>card(p).replace('<article class="card"',`<article class="card" data-rank="${i+1}" data-q="${esc(q)}"`)).join("")}</div></main>`;
+}
+
+/* ---------------- RESEARCHER PANEL ---------------- */
+const $=id=>document.getElementById(id);
+function openRP(){$("rp-pid").value=settings.pid;$("rp-cond").value=settings.cond;$("rp-badge").checked=settings.badge;$("rp-hl").checked=settings.highlight;
+  if(LOCK){["rp-cond","rp-badge","rp-hl"].forEach(i=>$(i).disabled=true);$("rp-lock").innerHTML=`<b>This is test site ${LOCK.site}: ${LOCK.label}.</b> The condition is fixed for this site.`}$("rp-max").value=settings.max;$("rp-sugg").value=settings.sugg;$("rp-status").textContent=`Site ${KEY} · ${settings.pid||"(no ID)"} · ${settings.cond}${settings.highlight?" · green highlight":""}${settings.badge?" · leaf icon":""} · ${log.length} events logged this session`;document.body.classList.add("rp-open")}
+function closeRP(){document.body.classList.remove("rp-open")}
+document.addEventListener("keydown",e=>{if(e.ctrlKey&&e.shiftKey&&(e.key==="E"||e.key==="e")){e.preventDefault();document.body.classList.contains("rp-open")?closeRP():openRP()}});
+$("rpclose").onclick=closeRP; $("rpbg").onclick=closeRP;
+$("rp-defaults").onclick=()=>{$("rp-sugg").value=DEFAULT_SUGG};
+$("rp-dl").onclick=()=>downloadSession();
+$("rp-save").onclick=()=>{
+  settings.pid=$("rp-pid").value.trim();settings.cond=$("rp-cond").value;settings.badge=$("rp-badge").checked;settings.highlight=$("rp-hl").checked;if(LOCK)Object.assign(settings,{cond:LOCK.cond,highlight:LOCK.highlight,badge:false});settings.max=Math.max(1,Math.min(10,+$("rp-max").value||8));settings.sugg=$("rp-sugg").value;
+  SUGG=parseSugg(settings.sugg);saveSettings();newSession();closeRP();
+};
+if(new URLSearchParams(location.search).has("admin")) setTimeout(openRP,50);
+
+/* ---------------- ROUTER ---------------- */
+function render(){
+  const h=location.hash||'#/'; let m, html, active=null;
+  if((m=h.match(/^#\/p\/(\w+)/))){html=viewProduct(m[1]);active=BY_ID[m[1]]?.cat;track('view_product',{id:m[1]})}
+  else if((m=h.match(/^#\/c\/([\w-]+)/))){html=viewCategory(m[1]);active=m[1];track('view_category',{cat:m[1]})}
+  else if((m=h.match(/^#\/s\/(.*)$/))){const q=decodeURIComponent(m[1]);html=viewSearch(q);qEl.value=q;formEl.classList.add('has-text')}
+  else if(h==='#/basket'){html=viewBasket();track('view_basket')}
+  else if(h==='#/done'){html=viewDone()}
+  else {html=viewCategory(CATS[0].slug);active=CATS[0].slug;track('view_category',{cat:CATS[0].slug})}
+  if(!h.startsWith('#/s/')){qEl.value='';formEl.classList.remove('has-text')}
+  const v=document.getElementById('view'); v.innerHTML=html; paintIcons(v);
+  document.querySelectorAll('nav.cats a').forEach(a=>a.classList.toggle('on',a.dataset.cat===active));
+  document.body.classList.remove('menu-open'); window.scrollTo(0,0); updateCart();
+  let pq=1;
+  v.onclick=e=>{
+    const add=e.target.closest('.add[data-id]');
+    if(add){e.stopPropagation();const id=add.dataset.id;setQty(id,(basket[id]||0)+1,'card');flash(`${BY_ID[id].name} added to basket`);return}
+    const st=e.target.closest('[data-step]');
+    if(st){pq=Math.max(1,pq+ +st.dataset.step);document.getElementById('pq').textContent=pq;return}
+    if(e.target.closest('#buy')){const id=h.match(/^#\/p\/(\w+)/)[1];setQty(id,(basket[id]||0)+pq,'detail');flash(`${pq} × ${BY_ID[id].name} added to basket`);document.getElementById('inb').innerHTML=`${basket[id]} in your basket · <a href="#/basket">Go to basket</a>`;return}
+    const ln=e.target.closest('[data-line]');
+    if(ln){const id=ln.dataset.line;setQty(id,(basket[id]||0)+ +ln.dataset.d,'basket');render();return}
+    const rm=e.target.closest('[data-rm]');
+    if(rm){setQty(rm.dataset.rm,0,'basket');render();return}
+    if(e.target.closest('#paybtn')){
+      const order={lines:Object.entries(basket).map(([id,qty])=>({id,qty})),total:total(),at:new Date().toISOString()};
+      track('pay',{items:order.lines,total:order.total});store.set('bt_order',order);basket={};save();go('#/done');return}
+    if(e.target.closest('#copylog')){const d=sessionData();navigator.clipboard?.writeText(d).then(()=>e.target.textContent='Copied!',()=>prompt('Copy:',d));return}
+    if(e.target.closest('#dllog')){downloadSession();return}
+    if(e.target.closest('#reset')){newSession();return}
+    const g=e.target.closest('[data-go]'); if(g){if(g.dataset.rank)track('result_click',{query:g.dataset.q,rank:+g.dataset.rank,id:g.dataset.go.split('/').pop()});go(g.dataset.go)}
+  };
+}
+function sessionData(){return JSON.stringify({site:KEY,siteLabel:LOCK?LOCK.label:'development',participant:settings.pid,condition:settings.cond,highlight:settings.highlight,leafIcon:settings.badge,maxSuggestions:settings.max,suggestionLists:settings.sugg,startedAt:new Date(started).toISOString(),durationMs:Date.now()-started,order:store.get('bt_order',null),events:log},null,2)}
+function downloadSession(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sessionData()],{type:'application/json'}));a.download=`session-site${KEY}-${settings.pid||'noid'}-${settings.cond}${settings.highlight?'-highlight':''}-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;a.click()}
+function newSession(){try{sessionStorage.clear()}catch(_){}basket={};log=[];started=Date.now();store.set('bt_start',started);track('session_start',{site:KEY,participant:settings.pid,condition:settings.cond,highlight:settings.highlight});go('#/');render();updateCart()}
+
+/* ---------------- INIT ---------------- */
+document.getElementById('drawer').innerHTML='<h3>Categories</h3>'+CATS.map(c=>`<a href="#/c/${c.slug}">${c.name}<span class="mi" data-i="chevron_right"></span></a>`).join('');
+paintIcons();
+if(!log.length) track('session_start',{site:KEY,participant:settings.pid,condition:settings.cond,highlight:settings.highlight});
+window.addEventListener('hashchange',render);
+render();
+</script>
+</body>
+</html>
