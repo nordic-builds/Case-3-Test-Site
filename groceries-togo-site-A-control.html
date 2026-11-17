@@ -1474,9 +1474,9 @@ function searchProducts(q){
 
 /* ---------------- QAC: suggestion lists & experimental settings ---------------- */
 // One line per search term. "*" marks a sustainable suggestion. Editable in the researcher panel.
-const DEFAULT_SUGG=`water bottle, bottle, drinking bottle, drink bottle, water, drink, flask, sports bottle, thermos: water bottle | *water bottle stainless steel | water bottle kids | *reusable water bottle | water bottle with straw | *bpa-free water bottle | water bottle 1 litre | sports water bottle | water bottle for school | *insulated steel water bottle | drinking bottle | water bottle leak-proof
-lunch box, lunchbox, lunch, bento, packed lunch, lunch container: lunch box | *stainless steel lunch box | lunch box kids | *plastic-free lunch box | lunch box with compartments | *reusable lunch box | lunch box for work | lunch box for school | bento lunch box | *phthalate-free lunch box | large lunch box | lunch box leak-proof
-food container, food containers, container, containers, food storage, storage, leftovers, leftover, freezer, fridge, tupperware, meal prep, food box, box: food storage containers | *glass food containers | food container with lid | *stainless steel food container | freezer containers | *recyclable food containers | containers for leftovers | airtight food container | food container set | *plastic-free food storage | microwave food container | meal prep containers`;
+const DEFAULT_SUGG=`water bottle, bottle, drinking bottle, drink bottle, water, drink, flask, sports bottle, thermos: water bottle | *water bottle stainless steel | water bottle kids | *water bottle reusable | water bottle with straw | *water bottle bpa-free | water bottle 1 litre | water bottle sport | water bottle for school | *water bottle insulated steel | water bottle leak-proof | drinking bottle
+lunch box, lunchbox, lunch, bento, packed lunch, lunch container: lunch box | *lunch box stainless steel | lunch box kids | *lunch box plastic-free | lunch box with compartments | *lunch box reusable | lunch box for work | lunch box for school | lunch box large | *lunch box phthalate-free | lunch box leak-proof | bento lunch box
+food container, food containers, container, containers, food storage, storage, leftovers, leftover, freezer, fridge, tupperware, meal prep, food box, box: food container | *food container glass | food container with lid | *food container stainless steel | food container for freezer | *food container recyclable | food container for leftovers | food storage containers | food container set | *food container plastic-free | food container microwave | meal prep containers`;
 const settings=Object.assign({cond:"eco-top",badge:false,highlight:false,max:6,pid:"",sugg:DEFAULT_SUGG},(()=>{try{return JSON.parse(localStorage.getItem("gtg_settings_"+KEY))||{}}catch(e){return {}}})());
 (()=>{const u=new URLSearchParams(location.search);
   if(u.get("cond"))settings.cond=u.get("cond"); if(u.get("pid"))settings.pid=u.get("pid");
@@ -1507,8 +1507,6 @@ function getSuggestions(input){
   if(!sets.length) return [];
   const usable=it=>!(settings.cond==="control"&&it.eco);
   let out=[];
-  // 2a. suggestions that START with what was typed
-  for(const {set} of sets) for(const it of set.items) if(usable(it)&&norm(it.text).startsWith(q)) out.push({...it,set:set.seed,li:set.li});
   // 2b. suggestions where a word starts with what was typed, in the order written in the list
   for(const {set} of sets) for(const it of set.items) if(usable(it)&&wordsPrefixMatch(it.text,q)) out.push({...it,set:set.seed,li:set.li});
   // 3. topped up with the rest of the best-fitting list, so there are always enough suggestions
