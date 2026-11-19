@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-/* ===== Clarity code ===== */
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "zg8d1f5yum");
-</script>
-  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Order groceries online | Groceries ToGo</title>
@@ -309,6 +299,13 @@
   .back{color:var(--navy)}
   .summary .row.total{font-weight:600}
 </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zg8d1f5yum");
+</script>
 </head>
 <body>
 
@@ -1341,7 +1338,7 @@ const store={get(k,d){try{return JSON.parse(sessionStorage.getItem(KEY+'_'+k))??
 let basket=store.get('bt_basket',{});         // {id: qty}
 let log=store.get('bt_log',[]);                // session events for the researcher
 let started=store.get('bt_start',Date.now()); store.set('bt_start',started);
-function track(ev,data={}){log.push({t:Date.now()-started,ev,...data,route:location.hash||'#/'});store.set('bt_log',log)}
+function track(ev,data={}){log.push({t:Date.now()-started,ev,...data,route:location.hash||'#/'});store.set('bt_log',log);if(window.__clarityBridge)window.__clarityBridge(ev,data);if(window.__sheetBridge)window.__sheetBridge(ev,data)}
 function save(){store.set('bt_basket',basket);updateCart()}
 function setQty(id,q,source){const before=basket[id]||0;q=Math.max(0,q);if(q===0)delete basket[id];else basket[id]=q;save();track(q>before?'add':'remove',{id,name:BY_ID[id].name,qty:q,source,sustainableProduct:BY_ID[id].eco})}
 const count=()=>Object.values(basket).reduce((a,b)=>a+b,0);
@@ -1601,6 +1598,108 @@ function viewSearch(q){
   return head+`<main class="page"><h1 class="ph">Search results for ${esc(q)}</h1><div class="count">${res.length} ${res.length===1?"item":"items"}</div><div class="grid">${res.map((p,i)=>card(p).replace('<article class="card"',`<article class="card" data-rank="${i+1}" data-q="${esc(q)}"`)).join("")}</div></main>`;
 }
 
+/* ---------------- MICROSOFT CLARITY: session labels + events ---------------- */
+(function(){
+  const u=new URLSearchParams(location.search);
+  const C=(...a)=>{try{if(window.clarity)window.clarity(...a)}catch(e){}};
+  // Consent: only sent when the interviewer's link says the participant has consented (…?consent=1)
+  if(u.get("consent")==="1") C("consentv2",{ad_Storage:"denied",analytics_Storage:"granted"});
+  C("set","site",LOCK?LOCK.site:"dev");
+  C("set","condition",LOCK?LOCK.label:"development");
+  if(settings.pid){C("set","participant",settings.pid);C("identify",settings.pid)}
+  const sus=b=>b?"sustainable":"regular";
+  let lastQuery=null,lastPick="none (typed)";
+  window.__clarityBridge=(ev,d)=>{
+    if(ev==="qac_select"){
+      C("event",`qac_click_pos${d.pos}_${sus(d.eco)}`);C("event",`qac_click_${sus(d.eco)}`);
+      C("set","suggestions_clicked",`${d.text} (pos ${d.pos}, ${sus(d.eco)})`);
+      lastPick=`pos ${d.pos} ${sus(d.eco)}: ${d.text}`;
+    }
+    else if(ev==="search_submit"){lastQuery=d.query;C("set","searches",d.query)}
+    else if(ev==="qac_hover"&&d.eco){C("event","qac_hover_sustainable")}
+    else if(ev==="result_click"){C("event",`result_click_${sus(d.sustainableProduct)}`)}
+    else if(ev==="add"){C("event",`add_to_basket_${sus(d.sustainableProduct)}`)}
+    else if(ev==="enter_blocked"){C("event","enter_key_blocked")}
+    else if(ev==="pay"){
+      const n=d.orderIndex, s=d.items.some(l=>l.sustainableProduct);
+      C("event",`purchase_${n}`);C("event",`purchase_${sus(s)}`);C("event",`purchase_${n}_${sus(s)}`);
+      C("set",`order${n}_products`,d.items.map(l=>`${l.qty} x ${l.name}`).join("; "));
+      C("set",`order${n}_sustainable`,s?"yes":"no");
+      C("set",`order${n}_last_search`,lastQuery||"none");
+      C("set",`order${n}_last_suggestion`,lastPick);
+      lastQuery=null;lastPick="none (typed)";
+    }
+  };
+  // first hover on each suggestion of each drop-down shown (lets you see who noticed sustainable options)
+  const seen=new Set();
+  qacEl.addEventListener("mouseover",e=>{const li=e.target.closest("li");if(!li)return;const s=cur[+li.dataset.i];if(!s)return;
+    const k=lastShownKey+"|"+s.text;if(seen.has(k))return;seen.add(k);track("qac_hover",{text:s.text,pos:s.pos,eco:s.eco})});
+})();
+
+/* ---------------- SPREADSHEET LOGGING (Google Sheet) ---------------- */
+const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkjtI5pC-QwL9Oqt5MvH6fBJvapznqmgV15F8aV5il4cCMw/exec";   // Google Apps Script web-app address
+(function(){
+  if(!LOG_URL) return;
+  const sid=Math.random().toString(36).slice(2,8)+"-"+Date.now().toString(36);
+  const meta=()=>({participant:settings.pid||"",site:LOCK?LOCK.site:"dev",condition:LOCK?LOCK.label:settings.cond,session_id:sid});
+  let buf=[],tasks=[];
+  function flush(){
+    if(!buf.length&&!tasks.length) return;
+    const body=JSON.stringify({...meta(),events:buf,tasks}); buf=[]; tasks=[];
+    try{ if(!(navigator.sendBeacon&&navigator.sendBeacon(LOG_URL,new Blob([body],{type:"text/plain"})))) fetch(LOG_URL,{method:"POST",mode:"no-cors",body,keepalive:true}) }catch(e){}
+  }
+  setInterval(flush,3000);
+  addEventListener("pagehide",flush);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flush()});
+  // running summary of the current task
+  let T;
+  const resetT=()=>{T={start:Date.now(),searches:[],pick:null,anyEco:0,lists:0,last:[],atPick:null,hoverEco:0,keys:0,enter:0,views:0,rank:{},from:{}}};
+  resetT();
+  window.__sheetBridge=(ev,d)=>{
+    buf.push({t:Date.now()-started,ev,route:location.hash||"#/",d});
+    switch(ev){
+      case "session_start": case "continue_shopping": resetT(); break;
+      case "keystroke": T.keys++; break;
+      case "qac_shown": T.lists++; T.last=d.suggestions||[]; break;
+      case "qac_hover": if(d.eco) T.hoverEco=1; break;
+      case "qac_select": T.pick=d; if(d.eco) T.anyEco=1; T.atPick=T.last; break;
+      case "search_submit": T.searches.push(d.query); break;
+      case "enter_blocked": T.enter++; break;
+      case "view_product": T.views++; break;
+      case "result_click": T.rank[d.id]=d.rank; break;
+      case "add": T.from[d.id]=d.source; if(d.source==="card"&&window.__lastCardRank) T.rank[d.id]=window.__lastCardRank; break;
+      case "pay": {
+        const items=d.items||[], list=T.atPick||T.last||[], eco=list.filter(s=>s.eco);
+        tasks.push({...meta(),
+          task_number:d.orderIndex,
+          duration_s:Math.round((Date.now()-T.start)/1000),
+          products:items.map(l=>`${l.qty} x ${l.name}`).join("; "),
+          product_ids:items.map(l=>l.id).join(", "),
+          category:[...new Set(items.map(l=>l.cat))].join(", "),
+          sustainable_purchase:items.some(l=>l.sustainableProduct)?1:0,
+          n_items:items.reduce((a,l)=>a+l.qty,0),
+          total_dkk:Math.round(d.total*100)/100,
+          n_searches:T.searches.length,
+          queries:T.searches.join(" | "),
+          suggestion_clicked:T.pick?T.pick.text:"",
+          suggestion_position:T.pick?T.pick.pos:"",
+          suggestion_sustainable:T.pick?(T.pick.eco?1:0):"",
+          any_sustainable_suggestion_clicked:T.anyEco,
+          sustainable_suggestions_shown:eco.length,
+          sustainable_positions_shown:eco.map(s=>s.pos).join(","),
+          hovered_sustainable_suggestion:T.hoverEco,
+          n_suggestion_lists_shown:T.lists,
+          n_keystrokes:T.keys,
+          enter_attempts:T.enter,
+          purchased_from:items.map(l=>T.from[l.id]||"").join(", "),
+          result_rank_of_purchase:items.map(l=>T.rank[l.id]??"").join(", "),
+          n_product_pages_viewed:T.views});
+        flush(); resetT(); break;
+      }
+    }
+  };
+})();
+
 /* ---------------- RESEARCHER PANEL ---------------- */
 const $=id=>document.getElementById(id);
 function openRP(){$("rp-pid").value=settings.pid;$("rp-cond").value=settings.cond;$("rp-badge").checked=settings.badge;$("rp-hl").checked=settings.highlight;
@@ -1632,7 +1731,7 @@ function render(){
   let pq=1;
   v.onclick=e=>{
     const add=e.target.closest('.add[data-id]');
-    if(add){e.stopPropagation();const id=add.dataset.id;setQty(id,(basket[id]||0)+1,'card');flash(`${BY_ID[id].name} added to basket`);return}
+    if(add){e.stopPropagation();const id=add.dataset.id;const rc=add.closest('.card');window.__lastCardRank=rc&&rc.dataset.rank?+rc.dataset.rank:null;setQty(id,(basket[id]||0)+1,'card');flash(`${BY_ID[id].name} added to basket`);return}
     const st=e.target.closest('[data-step]');
     if(st){pq=Math.max(1,pq+ +st.dataset.step);document.getElementById('pq').textContent=pq;return}
     if(e.target.closest('#buy')){const id=h.match(/^#\/p\/(\w+)/)[1];setQty(id,(basket[id]||0)+pq,'detail');flash(`${pq} × ${BY_ID[id].name} added to basket`);document.getElementById('inb').innerHTML=`${basket[id]} in your basket · <a href="#/basket">Go to basket</a>`;return}
