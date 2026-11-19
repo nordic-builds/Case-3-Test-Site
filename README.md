@@ -9,3 +9,9 @@
   <li><a href="groceries-togo-site-D.html">Version D a. (Only Hover highlight)</a></li>
   <li><a href="groceries-togo-site-D.html">Version D b. (Static highlight & hover highlight)</a></li>
 </ul>
+
+<br><br>
+
+<ul>
+  <li><a href="groceries-togo-site-D-mixed-highlight-options.html">Version D (all highlight options we pre-tested)</a></li>
+</ul>
