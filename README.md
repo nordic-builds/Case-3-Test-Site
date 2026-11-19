@@ -1,5 +1,4 @@
 # Case-3-Test-Site
-1st semester QAC sustainability hypothesis
 
 <h2>Test Pages</h2>
 
