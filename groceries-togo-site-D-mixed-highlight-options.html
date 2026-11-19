@@ -44,6 +44,8 @@
   /* Site D options: per-task highlight style */
   .qac li.eco-hl10{background:rgba(86,192,43,.10)}
   .qac li.eco-hl10.act{background:rgba(86,192,43,.22)}
+  .qac li.eco-hl30{background:rgba(86,192,43,.30)}
+  .qac li.eco-hl30.act{background:rgba(86,192,43,.45)}
   .qac li.eco-bold>span:not(.mi){font-weight:700;color:#2e8b3d}
   .qac li.eco-bold b{color:#2e8b3d}
   .qac li .leaf{color:#2e8b3d;font-size:18px;margin-left:auto}
@@ -335,7 +337,7 @@
       <option value="as-listed">Mixed – sustainable and regular suggestions in the order written below</option>
       <option value="control">Control – no sustainable suggestions</option>
     </select></label>
-  <label class="rp-row"><input type="checkbox" id="rp-hl"> Highlight sustainable suggestions (water bottle: green background 15% · lunch box: bold green text · food container: green background 10%)</label>
+  <label class="rp-row"><input type="checkbox" id="rp-hl"> Highlight sustainable suggestions (water bottle: green background 15% · lunch box: bold green text · food container: green background 10%, sustainable at positions 2, 5, 6 · napkins: green background 30%, sustainable at the bottom)</label>
   <label class="rp-row"><input type="checkbox" id="rp-badge"> Show leaf icon next to sustainable suggestions</label>
   <p class="rp-hint" id="rp-lock"></p>
   <label>Max suggestions shown <input id="rp-max" type="number" min="1" max="10" style="width:70px"></label>
@@ -356,15 +358,18 @@
 
 <script>
 /* SITE LOCK: set per test site. null = development version with all options. */
-const LOCK={"site": "D-options", "cond": "as-listed", "highlight": true, "label": "Site D – Mixed highlight options (water bottle: 15% green highlight · lunch box: bold green text · food container: 10% green highlight)"};
-/* Highlight style per suggestion list (0 = water bottle, 1 = lunch box, 2 = food container) */
-const ECO_STYLE={0:"eco-hl",1:"eco-bold",2:"eco-hl10"};
+const LOCK={"site": "D-options", "cond": "as-listed", "highlight": true, "label": "Site D – Mixed highlight options (water bottle: 15% green highlight · lunch box: bold green text · food container: 10% green highlight, sustainable at positions 2, 5, 6 · napkins: 30% green highlight, sustainable at the bottom)"};
+/* Highlight style per suggestion list (0 = water bottle, 1 = lunch box, 2 = food container, 3 = napkins) */
+const ECO_STYLE={0:"eco-hl",1:"eco-bold",2:"eco-hl10",3:"eco-hl30"};
+/* Fixed positions (1 = top) for sustainable suggestions per list; "bottom" puts them in the lowest spots; lists not named here keep the written order */
+const ECO_POS={2:[2,5,6],3:"bottom"};
 const KEY=LOCK?'site'+LOCK.site:'dev';
 /* ---------------- DATA ---------------- */
 const CATS = [
   {slug:"water-bottles",name:"Water bottles",path:[]},
   {slug:"lunch-boxes",name:"Lunch boxes",path:[]},
-  {slug:"food-containers",name:"Food containers",path:[]}
+  {slug:"food-containers",name:"Food containers",path:[]},
+  {slug:"napkins",name:"Napkins",path:[]}
 ];
 const PRODUCTS = [
 {
@@ -1304,10 +1309,332 @@ const PRODUCTS = [
 "desc": "- Innovative freshness box\n- Opens with one click and seals tight with one click\n- 100% leak-proof and airtight seal\n- Perfect for takeaway\n- Modern design\n- Ideal for storing in the fridge\n- Microwave safe without lid\n- Dishwasher safe\n- 100% recyclable",
 "was": null,
 "eco": true
+},
+{
+"id": "n1",
+"cat": "napkins",
+"name": "Salling plain napkins 40x40 cm 50-pack - white",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.40/pc",
+"price": 20,
+"img": "70957c6b1f6ffb82e14d94b5ae2dfe28",
+"lead": "3-ply dinner napkins",
+"desc": "Dinner napkins for laying the table.\n\n50 plain 3-ply paper napkins measuring 40 x 40 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "n2",
+"cat": "napkins",
+"name": "Budget plain napkins 30x30 cm 100-pack - white",
+"brand": "Budget",
+"qty": "100 pcs",
+"unit": "0.06/pc",
+"price": 6,
+"img": "4602cbd7f7e264b8dde8d46d333c295e",
+"lead": "1-ply everyday napkins",
+"desc": "Everyday napkins.\n\n100 white 1-ply paper napkins for everyday use, measuring 30 x 30 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "c1",
+"cat": "napkins",
+"name": "JONIE linen napkins 4-pack - natural white",
+"brand": "Jotex",
+"qty": "4 pcs",
+"unit": "74.75/pc",
+"price": 299,
+"img": "jot_2069592-02_Fs|124,1188,2416,1612",
+"lead": "100% linen",
+"desc": "Cloth napkins in 100% linen from Jotex – a set of four that can be washed and used again and again.\n\n- Size: 45 x 45 cm\n- Material: 100% linen\n- 4 napkins per pack",
+"was": null,
+"eco": true
+},
+{
+"id": "n3",
+"cat": "napkins",
+"name": "Salling patterned napkins 33x33 cm 50-pack - Danish flag",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.44/pc",
+"price": 21.95,
+"img": "da6947ca2708348d3cd909bed0ec66fc",
+"lead": "2-ply napkins with flags",
+"desc": "Decorate for birthdays and other festive occasions.\n\n50 2-ply paper napkins with flags, measuring 33 x 33 cm.\n\n- Colour: red and white\n- Material: paper",
+"was": null,
+"eco": false
+},
+{
+"id": "n4",
+"cat": "napkins",
+"name": "Salling plain napkins 33x33 cm 100-pack - white",
+"brand": "Salling",
+"qty": "100 pcs",
+"unit": "0.20/pc",
+"price": 20,
+"img": "695631b3d02d44a406983ab99ea5099e",
+"lead": "2-ply lunch napkins",
+"desc": "White lunch napkins.\n\n100 plain 2-ply paper napkins measuring 33 x 33 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "c2",
+"cat": "napkins",
+"name": "WALLACE cloth napkins 2-pack - light beige",
+"brand": "Jotex",
+"qty": "2 pcs",
+"unit": "59.50/pc",
+"price": 119,
+"img": "jot_2212909-01_Fs|124,1168,2412,1656",
+"lead": "Fabric napkins",
+"desc": "Plain fabric napkins from Jotex in a soft light beige – a calm, simple addition to everyday meals and festive tables. Washable and reusable.\n\n- Size: 40 x 40 cm\n- 2 napkins per pack",
+"was": null,
+"eco": true
+},
+{
+"id": "n5",
+"cat": "napkins",
+"name": "Windsor plain napkins 40x40 cm 20-pack - sand",
+"brand": "Windsor",
+"qty": "20 pcs",
+"unit": "1.00/pc",
+"price": 20,
+"img": "12c0a10d1eff3ae9bab9ec1004943285",
+"lead": "Lunch napkins",
+"desc": "These lunch napkins from Windsor measure 40 x 40 cm and come in a pack of 20. The colour adds an elegant, natural touch to your table – perfect for everyday meals as well as lunches, parties and other gatherings.",
+"was": null,
+"eco": false
+},
+{
+"id": "n6",
+"cat": "napkins",
+"name": "Windsor Christmas napkins 33x33 cm 20-pack",
+"brand": "Windsor",
+"qty": "20 pcs",
+"unit": "0.50/pc",
+"price": 10,
+"img": "b98fbe2cb0947ad22b22e45ba28da3c6",
+"lead": "Christmas heart motif",
+"desc": "Lunch napkins with a Christmas heart motif. An elegant addition to the Christmas table – the pack contains 20 napkins, perfect for Christmas lunches, dinners and other festive gatherings.\n\nSize: 33 x 33 cm. 3-ply soft paper.",
+"was": null,
+"eco": false
+},
+{
+"id": "c3",
+"cat": "napkins",
+"name": "HOLLY cloth napkins 8-pack - beige",
+"brand": "Jotex",
+"qty": "8 pcs",
+"unit": "24.38/pc",
+"price": 195,
+"img": "jot_1730686-01_Fs|120,1408,2416,1184",
+"lead": "Set of 8 fabric napkins",
+"desc": "A set of eight beige fabric napkins from Jotex – enough for the whole table. Washable and reusable.\n\n- Size: 45 x 45 cm\n- 8 napkins per pack",
+"was": 279,
+"eco": true
+},
+{
+"id": "n7",
+"cat": "napkins",
+"name": "Salling plain napkins 33x33 cm 50-pack - sand",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.30/pc",
+"price": 15,
+"img": "8003d9342cb8b25ae283d4df074cdb01",
+"lead": "3-ply lunch napkins",
+"desc": "Lunch napkins in a lovely colour for laying the table.\n\n50 plain 3-ply paper napkins measuring 33 x 33 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "n8",
+"cat": "napkins",
+"name": "Flora Danica patterned napkins 33x33 cm 20-pack",
+"brand": "Flora Danica",
+"qty": "20 pcs",
+"unit": "0.60/pc",
+"price": 12,
+"img": "b175c157-2933-4630-b048-a3454218bd3e",
+"lead": "3-ply napkins with motif",
+"desc": "Lunch napkins with a beautiful motif.\n\n20 patterned 3-ply paper napkins measuring 33 x 33 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "c4",
+"cat": "napkins",
+"name": "LINUS linen-blend napkins 2-pack - linen beige",
+"brand": "Jotex",
+"qty": "2 pcs",
+"unit": "49.50/pc",
+"price": 99,
+"img": "jot_2162653-02_Fs|116,1468,2424,1068",
+"lead": "Linen blend",
+"desc": "Fabric napkins in a linen blend from Jotex, with a natural, relaxed look. Washable and reusable.\n\n- Size: 45 x 45 cm\n- Material: linen blend\n- 2 napkins per pack",
+"was": null,
+"eco": true
+},
+{
+"id": "n9",
+"cat": "napkins",
+"name": "Salling plain napkins 40x40 cm 50-pack - dark blue",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.40/pc",
+"price": 20,
+"img": "035aaf69e3814362039cf5deba757d59",
+"lead": "Dinner napkins in navy",
+"desc": "These dinner napkins from Salling measure 40 x 40 cm and come in a pack of 50. The navy blue colour adds a soft, charming touch to your table – perfect for everyday meals as well as dinners, parties and other gatherings.",
+"was": null,
+"eco": false
+},
+{
+"id": "n10",
+"cat": "napkins",
+"name": "Patterned napkins 33x33 cm 20-pack - Royal Guard",
+"brand": "Det Gamle Apotek",
+"qty": "20 pcs",
+"unit": "1.00/pc",
+"price": 20,
+"img": "40b4b37978eabc99e7429b17f6e53d42",
+"lead": "Birthday motif",
+"desc": "Decorate for birthdays and other festive occasions.\n\n20 3-ply paper napkins with a birthday motif, measuring 33 x 33 cm.\n\n- Colour: white and red\n- Material: paper",
+"was": null,
+"eco": false
+},
+{
+"id": "c5",
+"cat": "napkins",
+"name": "CINCIN cloth napkins 4-pack - olive green",
+"brand": "Jotex",
+"qty": "4 pcs",
+"unit": "31.25/pc",
+"price": 125,
+"img": "jot_2285982-03_Fs|72,719,1454,974",
+"lead": "Fabric napkins",
+"desc": "Olive green fabric napkins from Jotex that bring colour to the table. Washable and reusable.\n\n- Size: 45 x 45 cm\n- 4 napkins per pack",
+"was": 179,
+"eco": true
+},
+{
+"id": "n11",
+"cat": "napkins",
+"name": "Salling plain napkins 40x40 cm 50-pack - apple green",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.40/pc",
+"price": 20,
+"img": "f4383993a6dcf3934d26c7a692e914ed",
+"lead": "Dinner napkins in light green",
+"desc": "These dinner napkins from Salling measure 40 x 40 cm and come in a pack of 50. The light green colour adds a fresh, natural touch to your table – perfect for everyday meals as well as dinners, parties and other gatherings.",
+"was": null,
+"eco": false
+},
+{
+"id": "n12",
+"cat": "napkins",
+"name": "Windsor plain napkins 40x40 cm 20-pack - ruby red",
+"brand": "Windsor",
+"qty": "20 pcs",
+"unit": "1.00/pc",
+"price": 20,
+"img": "268d98c9-aebf-4607-ab51-609e5fbacb35",
+"lead": "3-ply dinner napkins",
+"desc": "Dinner napkins in a lovely colour for laying the table.\n\n20 plain 3-ply paper napkins measuring 40 x 40 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "c6",
+"cat": "napkins",
+"name": "SANNE linen-blend napkins 4-pack - beige",
+"brand": "Jotex",
+"qty": "4 pcs",
+"unit": "37.25/pc",
+"price": 149,
+"img": "jot_2129228-01_Fs|132,1260,2408,1464",
+"lead": "Linen blend",
+"desc": "Beige fabric napkins in a linen blend from Jotex. Washable and reusable – a set of four for laying the table again and again.\n\n- Size: 45 x 45 cm\n- Material: linen blend\n- 4 napkins per pack",
+"was": null,
+"eco": true
+},
+{
+"id": "n13",
+"cat": "napkins",
+"name": "Windsor plain napkins 25x25 cm 20-pack - white",
+"brand": "Windsor",
+"qty": "20 pcs",
+"unit": "0.45/pc",
+"price": 9,
+"img": "16d0c776-f67d-456a-9702-9f7d988791af",
+"lead": "3-ply coffee napkins",
+"desc": "Coffee napkins for laying the table.\n\n20 plain 3-ply paper napkins measuring 25 x 25 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "n14",
+"cat": "napkins",
+"name": "Shape napkins pine cone 12-pack",
+"brand": "",
+"qty": "12 pcs",
+"unit": "0.83/pc",
+"price": 10,
+"img": "7baf6089718d2b29f58cefc14e79221a",
+"lead": "Shaped like a pine cone",
+"desc": "Set the table for Christmas dinner or the Christmas lunch. Paper napkins shaped like a pine cone add a cosy atmosphere to the Christmas table.",
+"was": null,
+"eco": false
+},
+{
+"id": "c7",
+"cat": "napkins",
+"name": "KLAUS cloth napkins 2-pack - blue/natural white",
+"brand": "Jotex",
+"qty": "2 pcs",
+"unit": "47.50/pc",
+"price": 95,
+"img": "jot_2168538-02_Fs|112,1384,2428,1232",
+"lead": "Fabric napkins",
+"desc": "Blue and natural white fabric napkins from Jotex. Washable and reusable.\n\n- Size: 45 x 45 cm\n- 2 napkins per pack",
+"was": 119,
+"eco": true
+},
+{
+"id": "n15",
+"cat": "napkins",
+"name": "Salling plain napkins 33x33 cm 50-pack - light blue",
+"brand": "Salling",
+"qty": "50 pcs",
+"unit": "0.30/pc",
+"price": 15,
+"img": "f95af42268737c651e9859eeb6469c3a",
+"lead": "3-ply lunch napkins",
+"desc": "Lunch napkins in a lovely colour for laying the table.\n\n50 plain 3-ply paper napkins measuring 33 x 33 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "c8",
+"cat": "napkins",
+"name": "TANNE cloth napkins 2-pack - green/natural white",
+"brand": "Jotex",
+"qty": "2 pcs",
+"unit": "31.50/pc",
+"price": 63,
+"img": "jot_2173290-01_Fs|116,1420,2420,1168",
+"lead": "Fabric napkins",
+"desc": "Green and natural white fabric napkins from Jotex. Washable and reusable.\n\n- Size: 45 x 45 cm\n- 2 napkins per pack",
+"was": 79,
+"eco": true
 }
 ];
 const BY_ID = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
-const IMG = (id,w=500)=>`https://digitalassets.sallinggroup.com/image/upload/e_trim:2/w_${w},h_${w},c_pad,ar_1,q_auto,f_auto,b_white,e_sharpen:80/t_DigitalAiLogo/${id}`;
+const IMG = (id,w=500)=>id.startsWith('jot_')?`https://assets.ellosgroup.com/i/ellos/${id.split('|')[0]}?crop=${id.split('|')[1]}&maxW=${w}&bg=rgb(255,255,255)&fmt=jpg`:`https://digitalassets.sallinggroup.com/image/upload/e_trim:2/w_${w},h_${w},c_pad,ar_1,q_auto,f_auto,b_white,e_sharpen:80/t_DigitalAiLogo/${id}`;
 
 /* ---------------- ICONS ---------------- */
 const ICONS={
@@ -1456,8 +1783,8 @@ function viewDone(){
 
 /* ---------------- SEARCH: product keywords ---------------- */
 // Extra keywords per product (only attributes that are true for the product)
-const TAGS={"w1": "water bottle bottle drinking bottle drink flask sports reusable fitness gym sport leak-proof", "w2": "water bottle bottle drinking bottle drink flask sports reusable sport cycling bpa-free phthalate-free", "w3": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal gym work", "w4": "water bottle bottle drinking bottle drink flask sports reusable straw work school plastic", "w5": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w6": "water bottle bottle drinking bottle drink flask sports reusable kids children small", "w7": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo thermos leak-proof work school", "w8": "water bottle bottle drinking bottle drink flask sports reusable 1 litre litre large plastic sport school work", "w9": "water bottle bottle drinking bottle drink flask sports reusable kids school straw tritan phthalate-free dishwasher", "w10": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal work", "w11": "water bottle bottle drinking bottle drink flask sports reusable plastic gym fitness", "w12": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w13": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w14": "water bottle bottle drinking bottle drink flask sports reusable thermo thermos insulated stainless steel steel metal work", "w15": "water bottle bottle drinking bottle drink flask sports reusable straw school work plastic large", "w16": "water bottle bottle drinking bottle drink flask sports reusable plastic work", "w17": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school straw", "w18": "water bottle bottle drinking bottle drink flask sports reusable kids children school", "w19": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w20": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school", "w21": "water bottle bottle drinking bottle drink flask sports reusable plastic work handle", "w22": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo work school", "w23": "water bottle bottle drinking bottle drink flask sports reusable kids children leak-proof", "l1": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults", "l2": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l3": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal plastic-free compartments dishwasher adults", "l4": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge leftovers plastic", "l5": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments phthalate-free dishwasher", "l6": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments leak-proof dishwasher", "l7": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults leftovers", "l8": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults picnic dishwasher", "l9": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments plastic adults", "l10": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "l11": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments leak-proof phthalate-free salad adults", "l12": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults", "l13": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults", "l14": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge small plastic", "l15": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l16": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l17": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments phthalate-free dishwasher adults", "l18": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l19": "lunch box lunchbox lunch bento packed lunch work school box reusable kids teenagers large", "l20": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments christmas large", "l21": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults work", "l22": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "f1": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack plastic", "f2": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f3": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f4": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable leak-proof set pack plastic small", "f5": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack small stackable microwave dishwasher phthalate-free", "f6": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher", "f7": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight plastic", "f8": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack large plastic", "f9": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f10": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f11": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f12": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f13": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack airtight leak-proof microwave dishwasher recyclable", "f14": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large", "f15": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stackable microwave dishwasher phthalate-free lunch", "f16": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f17": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large plastic", "f18": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f19": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free small", "f20": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable small set pack phthalate-free", "f21": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass jar airtight plastic-free", "f22": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher small"};
-const CATWORDS_RAW={"water-bottles": "water bottle bottle drinking bottle drink flask sports reusable", "lunch-boxes": "lunch box lunchbox lunch bento packed lunch work school box reusable", "food-containers": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable"};
+const TAGS={"w1": "water bottle bottle drinking bottle drink flask sports reusable fitness gym sport leak-proof", "w2": "water bottle bottle drinking bottle drink flask sports reusable sport cycling bpa-free phthalate-free", "w3": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal gym work", "w4": "water bottle bottle drinking bottle drink flask sports reusable straw work school plastic", "w5": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w6": "water bottle bottle drinking bottle drink flask sports reusable kids children small", "w7": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo thermos leak-proof work school", "w8": "water bottle bottle drinking bottle drink flask sports reusable 1 litre litre large plastic sport school work", "w9": "water bottle bottle drinking bottle drink flask sports reusable kids school straw tritan phthalate-free dishwasher", "w10": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal work", "w11": "water bottle bottle drinking bottle drink flask sports reusable plastic gym fitness", "w12": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w13": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w14": "water bottle bottle drinking bottle drink flask sports reusable thermo thermos insulated stainless steel steel metal work", "w15": "water bottle bottle drinking bottle drink flask sports reusable straw school work plastic large", "w16": "water bottle bottle drinking bottle drink flask sports reusable plastic work", "w17": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school straw", "w18": "water bottle bottle drinking bottle drink flask sports reusable kids children school", "w19": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w20": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school", "w21": "water bottle bottle drinking bottle drink flask sports reusable plastic work handle", "w22": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo work school", "w23": "water bottle bottle drinking bottle drink flask sports reusable kids children leak-proof", "l1": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults", "l2": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l3": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal plastic-free compartments dishwasher adults", "l4": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge leftovers plastic", "l5": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments phthalate-free dishwasher", "l6": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments leak-proof dishwasher", "l7": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults leftovers", "l8": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults picnic dishwasher", "l9": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments plastic adults", "l10": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "l11": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments leak-proof phthalate-free salad adults", "l12": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults", "l13": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults", "l14": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge small plastic", "l15": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l16": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l17": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments phthalate-free dishwasher adults", "l18": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l19": "lunch box lunchbox lunch bento packed lunch work school box reusable kids teenagers large", "l20": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments christmas large", "l21": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults work", "l22": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "f1": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack plastic", "f2": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f3": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f4": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable leak-proof set pack plastic small", "f5": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack small stackable microwave dishwasher phthalate-free", "f6": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher", "f7": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight plastic", "f8": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack large plastic", "f9": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f10": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f11": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f12": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f13": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack airtight leak-proof microwave dishwasher recyclable", "f14": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large", "f15": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stackable microwave dishwasher phthalate-free lunch", "f16": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f17": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large plastic", "f18": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f19": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free small", "f20": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable small set pack phthalate-free", "f21": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass jar airtight plastic-free", "f22": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher small", "n1": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain white", "n2": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain white", "c1": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable linen white", "n3": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable patterned motif", "n4": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain white", "c2": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable beige", "n5": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain sand", "n6": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable christmas patterned motif", "c3": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable beige", "n7": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain sand", "n8": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable patterned motif", "c4": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable linen beige", "n9": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain blue navy", "n10": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable patterned motif", "c5": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable green", "n11": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain green", "n12": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain red", "c6": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable linen beige", "n13": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain white", "n14": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable christmas plain", "c7": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable white blue", "n15": "napkin napkins serviette serviettes table setting table dinner lunch paper disposable plain blue", "c8": "napkin napkins serviette serviettes table setting table dinner lunch cloth fabric textile reusable washable white green"};
+const CATWORDS_RAW={"water-bottles": "water bottle bottle drinking bottle drink flask sports reusable", "lunch-boxes": "lunch box lunchbox lunch bento packed lunch work school box reusable", "food-containers": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable", "napkins": "napkin napkins serviette serviettes"};
 const STOP=new Set(["a","an","and","the","for","with","of","to","in","set"]);
 const norm=t=>t.toLowerCase().replace(/[^a-z0-9æøå\- ]+/g," ").replace(/\s+/g," ").trim();
 const stem=w=>w.length>4&&w.endsWith("es")&&!w.endsWith("ses")?w.slice(0,-2):w.length>3&&w.endsWith("s")&&!w.endsWith("ss")?w.slice(0,-1):w;
@@ -1496,7 +1823,8 @@ function searchProducts(q){
 // One line per search term. "*" marks a sustainable suggestion. Editable in the researcher panel.
 const DEFAULT_SUGG=`water bottle, bottle, drinking bottle, drink bottle, water, drink, flask, sports bottle, thermos: water bottle | *water bottle stainless steel | water bottle kids | *water bottle reusable | water bottle with straw | *water bottle bpa-free | water bottle 1 litre | water bottle sport | water bottle for school | *water bottle insulated steel | water bottle leak-proof | drinking bottle
 lunch box, lunchbox, lunch, bento, packed lunch, lunch container: lunch box | *lunch box stainless steel | lunch box kids | *lunch box plastic-free | lunch box with compartments | *lunch box reusable | lunch box for work | lunch box for school | lunch box large | *lunch box phthalate-free | lunch box leak-proof | bento lunch box
-food container, food containers, container, containers, food storage, storage, leftovers, leftover, freezer, fridge, tupperware, meal prep, food box, box: food container | *food container glass | food container with lid | *food container stainless steel | food container for freezer | *food container recyclable | food container for leftovers | food storage containers | food container set | *food container plastic-free | food container microwave | meal prep containers`;
+food container, food containers, container, containers, food storage, storage, leftovers, leftover, freezer, fridge, tupperware, meal prep, food box, box: food container | *food container glass | food container with lid | *food container stainless steel | food container for freezer | *food container recyclable | food container for leftovers | food storage containers | food container set | *food container plastic-free | food container microwave | meal prep containers
+napkins, napkin, serviettes, serviette, cloth napkins, paper napkins, table napkins, dinner napkins, lunch napkins: napkins | *napkins cloth | napkins paper | *napkins linen | napkins christmas | napkins white | *napkins washable | napkins 40x40 | napkins 33x33 | *napkins reusable | napkins patterned | serviettes`;
 const settings=Object.assign({cond:"eco-top",badge:false,highlight:false,max:6,pid:"",sugg:DEFAULT_SUGG},(()=>{try{return JSON.parse(localStorage.getItem("gtg_settings_"+KEY))||{}}catch(e){return {}}})());
 (()=>{const u=new URLSearchParams(location.search);
   if(u.get("cond"))settings.cond=u.get("cond"); if(u.get("pid"))settings.pid=u.get("pid");
@@ -1533,7 +1861,14 @@ function getSuggestions(input){
   for(const {set} of sets) for(const it of set.items) if(usable(it)) out.push({...it,set:set.seed,li:set.li});
   const seen=new Set(); out=out.filter(x=>{const k=norm(x.text);if(seen.has(k))return false;seen.add(k);return true});
   // 4. always exactly N suggestions; the same N in every condition (control: sustainable ones removed first)
-  out=out.slice(0,settings.max);
+  const fixed=ECO_POS[sets[0].set.li];
+  if(fixed==="bottom"){out=out.slice(0,settings.max).sort((a,b)=>a.eco-b.eco)}
+  else if(fixed&&settings.cond!=="control"){
+    const eco=out.filter(x=>x.eco), reg=out.filter(x=>!x.eco), res=[];
+    for(let p=1;p<=settings.max;p++){const want=fixed.includes(p);
+      if(want&&eco.length)res.push(eco.shift());else if(!want&&reg.length)res.push(reg.shift());else if(eco.length||reg.length)res.push((eco.length?eco:reg).shift())}
+    out=res;
+  } else out=out.slice(0,settings.max);
   // 5. experimental manipulation of the ranking (stable sort keeps the written order inside each group)
   if(settings.cond==="eco-top") out.sort((a,b)=>(b.eco-a.eco));
   if(settings.cond==="eco-bottom") out.sort((a,b)=>(a.eco-b.eco));
