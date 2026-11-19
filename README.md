@@ -4,10 +4,10 @@
 
 <ul>
   <li><a href="groceries-togo-site-A-control.html">Version A (Control)</a></li>
-  <li><a href="groceries-togo-site-B.html">Version B (Mixed)</a></li>
-  <li><a href="groceries-togo-site-C.html">Version C (Sustainable top)</a></li>
- <li><a href="groceries-togo-site-D.html"><del>Version D a. (Only Hover highlight)</del></a></li>
-  <li><a href="groceries-togo-site-D.html">Version D b. (Static highlight & hover highlight)</a></li>
+  <li><a href="groceries-togo-site-B-mixed.html">Version B (Mixed)</a></li>
+  <li><a href="groceries-togo-site-C-sustainable-top">Version C (Sustainable top)</a></li>
+ <li><a href="groceries-togo-site-Da-hover-highlight"><del>Version D a. (Only Hover highlight)</del></a></li>
+  <li><a href="groceries-togo-site-Da-hover-highlight">Version D b. (Static highlight & hover highlight)</a></li>
 </ul>
 
 <br><br>
