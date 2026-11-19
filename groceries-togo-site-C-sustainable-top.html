@@ -218,6 +218,7 @@
   .qac li>.mi:first-child{display:none}
   .qac li b{font-weight:700}
   .qac li.act{background:#f0f2f7}
+  .qac li:hover{background:#ececec}
   .page{background:#fff;max-width:1200px;margin:0 auto 40px;padding:22px 18px 30px}
   .ph{font-size:34px;font-weight:600;color:#1d2f54;margin:0 0 6px}
   .count{display:block;height:auto;font-weight:400;font-size:14px;color:var(--fxgrey);text-transform:none;letter-spacing:0;text-align:center;margin:6px 0 14px}
@@ -310,7 +311,7 @@
     <form class="search" id="searchform" autocomplete="off" role="search">
       <input id="q" placeholder="Search more than 35,000 products" aria-label="Search" aria-autocomplete="list" aria-controls="qac" spellcheck="false">
       <span class="clear mi" id="qclear" title="Clear" data-i="close"></span>
-      <button class="go" type="submit" aria-label="Search"><span class="mi" data-i="search"></span></button>
+      <button class="go" type="button" aria-label="Search" onmousedown="event.preventDefault();document.getElementById('q').focus();drawQac()"><span class="mi" data-i="search"></span></button>
       <ul class="qac" id="qac" role="listbox"></ul>
     </form>
     <div class="spacer"></div>
@@ -1535,12 +1536,13 @@ function getSuggestions(input){
 function hl(text,input){
   // Google-style: what the participant typed is plain, the predicted completion is bold
   const t=esc(text), q=norm(input);
-  // bold the typed letters where they start a word (as on Føtex)
-  const typed=input.trim(); if(!typed) return t;
+  // what the participant typed stays regular; everything the suggestion adds is bold
+  const typed=input.trim(); if(!typed) return "<b>"+t+"</b>";
   const i=text.toLowerCase().search(new RegExp("(^|\\s)"+typed.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
-  if(i<0) return t;
+  if(i<0) return "<b>"+t+"</b>";
   const st=i===0&&text.toLowerCase().startsWith(typed.toLowerCase())?0:i+1;
-  return esc(text.slice(0,st))+"<b>"+esc(text.slice(st,st+typed.length))+"</b>"+esc(text.slice(st+typed.length));
+  const pre=text.slice(0,st), mid=text.slice(st,st+typed.length), post=text.slice(st+typed.length);
+  return (pre?"<b>"+esc(pre)+"</b>":"")+esc(mid)+(post?"<b>"+esc(post)+"</b>":"");
 }
 
 /* ---------------- QAC: UI ---------------- */
@@ -1560,21 +1562,18 @@ let typedValue="";
 qEl.addEventListener("input",()=>{if(!typedAt)typedAt=Date.now();typedValue=qEl.value;track("keystroke",{input:qEl.value});drawQac()});
 qEl.addEventListener("focus",()=>{track("search_focus");drawQac()});
 qEl.addEventListener("blur",()=>setTimeout(()=>qacEl.classList.remove("open"),150));
+// Enter and the arrow keys do nothing: a search can only be made by clicking a suggestion
 qEl.addEventListener("keydown",e=>{
-  if(!qacEl.classList.contains("open"))return;
-  if(e.key==="ArrowDown"){e.preventDefault();setAct(Math.min(cur.length-1,act+1))}
-  else if(e.key==="ArrowUp"){e.preventDefault();if(act<=0){act=-1;qEl.value=typedValue;setAct(-1)}else setAct(act-1)}
-  else if(e.key==="Escape"){qacEl.classList.remove("open");qEl.value=typedValue}
-  else if(e.key==="Enter"&&act>=0){e.preventDefault();pick(cur[act],"keyboard")}
+  if(e.key==="Enter"){e.preventDefault();track("enter_blocked",{input:qEl.value});return}
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();return}
+  if(e.key==="Escape"){qacEl.classList.remove("open")}
 });
 qacEl.addEventListener("mousedown",e=>{const li=e.target.closest("li");if(li){e.preventDefault();pick(cur[+li.dataset.i],"mouse")}});
 function pick(s,how){
   track("qac_select",{typed:typedValue,text:s.text,pos:s.pos,eco:s.eco,shown:cur.length,method:how,msSinceFirstKey:typedAt?Date.now()-typedAt:null});
   qEl.value=s.text; submitSearch(s.text,"suggestion",s);
 }
-formEl.addEventListener("submit",e=>{e.preventDefault();const v=qEl.value.trim();if(!v)return;
-  const match=cur.find(s=>norm(s.text)===norm(v));
-  submitSearch(v,act>=0?"suggestion":match?"typed_matches_suggestion":"typed",match)});
+formEl.addEventListener("submit",e=>{e.preventDefault();track("submit_blocked",{input:qEl.value});qEl.focus();drawQac()});
 document.getElementById("qclear").addEventListener("click",()=>{qEl.value="";typedValue="";track("search_clear");qEl.focus();drawQac()});
 function submitSearch(v,source,s){
   track("search_submit",{query:v,source,typed:typedValue,eco:s?s.eco:null,pos:s?s.pos:null});
