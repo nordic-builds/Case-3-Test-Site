@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order groceries online | Groceries ToGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#0091cf;--blue-dark:#006d9c;--ink:#1e2329;--muted:#5d6b7d;--grey:#f3f3f3;--line:#e3e6ea;--green:#00a651;--green-dark:#008c44;--info:#e5f4fb;--red:#e4002b}
+  *{box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{margin:0;font-family:"Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:16px}
+  a{color:var(--blue);text-decoration:none}
+  button{font-family:inherit}
+  .mi{display:inline-flex;font-size:24px;line-height:1}
+  .mi svg{display:block}
+
+  header{position:sticky;top:0;z-index:20;background:var(--blue);padding:8px 14px}
+  .bar{display:flex;align-items:center;gap:18px;height:44px}
+  .menu-btn{display:flex;align-items:center;gap:6px;height:44px;padding:0 18px;border:2px solid #fff;background:transparent;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  .logo{display:flex;align-items:center;height:44px;cursor:pointer}
+  .logo .wm{color:#fff;font-weight:900;font-size:27px;letter-spacing:-.04em;line-height:1}
+  .logo .wm span{color:#0b2a3a;margin-left:1px}
+  .spacer{flex:1}
+  .login{display:flex;align-items:center;gap:6px;color:#fff;font-weight:800;font-size:15px;padding:0 18px}
+  .cart{display:flex;align-items:center;gap:20px;background:var(--blue-dark);color:#fff;font-weight:800;font-size:15px;height:44px;padding:0 26px;cursor:pointer;position:relative;border:0}
+  .cart .badge{position:absolute;top:4px;left:38px;background:var(--green);color:#fff;font-size:11px;font-weight:900;border-radius:10px;padding:1px 6px}
+  .cart .sum{font-weight:900}
+  .search{margin-top:8px;display:flex;align-items:center;background:#fff;border-radius:24px;height:42px;padding:0 6px 0 14px}
+  .search{position:relative}
+  .search input{flex:1;border:0;outline:0;font-size:15px;font-family:inherit;background:transparent;height:100%}
+  .search .clear{color:var(--blue);font-size:13px;padding:0 14px;border-right:1px solid #ccd3da;cursor:pointer;display:none}
+  .search.has-text .clear{display:block}
+  .search .go{color:var(--blue);padding:0 12px;background:none;border:0;cursor:pointer;height:100%;display:flex;align-items:center}
+  .qac{position:absolute;left:0;right:0;top:46px;margin:0;padding:6px 0;list-style:none;background:#fff;border-radius:0 0 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.18);display:none;z-index:50}
+  .qac.open{display:block}
+  .qac li{display:flex;align-items:center;gap:12px;padding:10px 18px;font-size:15px;color:var(--ink);cursor:pointer}
+  .qac li .mi{color:#8a96a3;font-size:18px}
+  .qac li b{font-weight:800}
+  .qac li.act{background:#eef7fc}
+  /* Site D-b: sustainable suggestions always green (#56C02B, 15%); slightly stronger green on hover (others grey, as on all sites) */
+  .qac li.eco-hl{background:rgba(86,192,43,.15)}
+  .qac li.eco-hl:hover{background:rgba(86,192,43,.28)}
+  .qac li .leaf{color:#2e8b3d;font-size:18px;margin-left:auto}
+  .rp-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60;display:none}
+  .rp{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:#fff;z-index:61;padding:18px 22px;overflow:auto;display:none;font-size:14px;color:var(--ink)}
+  body.rp-open .rp,body.rp-open .rp-bg{display:block}
+  .rp h2{display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:900;margin:0 0 6px}
+  .rp h2 button{border:0;background:none;font-size:26px;cursor:pointer;color:var(--muted)}
+  .rp label{display:block;font-weight:800;margin:14px 0 4px}
+  .rp label input:not([type=checkbox]),.rp select,.rp textarea{display:block;width:100%;margin-top:4px;padding:8px;border:1px solid #c8d0d8;font:inherit;font-weight:400}
+  .rp label.rp-row{display:flex;gap:8px;align-items:center;font-weight:700}
+  .rp textarea{height:260px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;white-space:pre}
+  .rp-hint{color:var(--muted);font-size:12.5px;line-height:1.5;margin:6px 0}
+  .rp-hint code{background:#f0f2f4;padding:1px 4px}
+  .rp-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .rp-btns button{border:1px solid #c8d0d8;background:#fff;padding:9px 12px;font-weight:800;cursor:pointer}
+  .rp-btns .primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  .noresults{background:#fff;padding:26px;font-size:15px;color:var(--ink);margin-bottom:12px}
+  nav.cats{display:flex;gap:4px;margin-top:8px;overflow-x:auto}
+  nav.cats a{color:#fff;font-weight:800;font-size:14px;padding:8px 14px;white-space:nowrap;border-bottom:3px solid transparent}
+  nav.cats a.on{border-bottom-color:#fff}
+  nav.cats a:hover{background:rgba(255,255,255,.12)}
+
+  .drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:none}
+  .drawer{position:fixed;top:0;left:0;bottom:0;width:300px;background:#fff;z-index:41;transform:translateX(-100%);transition:transform .2s;padding:18px 0}
+  body.menu-open .drawer{transform:none}
+  body.menu-open .drawer-bg{display:block}
+  .drawer h3{margin:0 20px 10px;font-size:13px;font-weight:900;color:var(--muted);text-transform:uppercase}
+  .drawer a{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);color:var(--ink);font-weight:800;font-size:15px}
+  .drawer a .mi{color:var(--blue)}
+
+  .toast{position:fixed;top:160px;right:24px;z-index:30;background:var(--info);color:var(--blue);font-size:13px;line-height:1.45;display:flex;gap:12px;align-items:flex-start;padding:10px 14px;max-width:330px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .toast .i{flex:0 0 20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .toast b{font-weight:900;cursor:pointer;margin-top:2px}
+  .added{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 18px;font-size:14px;font-weight:700;z-index:35;transition:transform .2s;display:flex;gap:10px;align-items:center}
+  .added.show{transform:translateX(-50%) translateY(0)}
+  .added .mi{color:var(--green)}
+
+  .crumbs{padding:12px 14px;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .crumbs a{color:var(--ink)}
+  .crumbs .sep{color:var(--blue);font-size:20px}
+  .crumbs .cur{color:var(--muted)}
+
+  .page{background:var(--grey);margin:14px 14px 40px;padding:0 32px 34px;min-height:400px}
+  .count{display:flex;align-items:center;gap:22px;height:46px;font-weight:900;font-size:14px;letter-spacing:.02em;text-transform:uppercase}
+  .count::before,.count::after{content:"";flex:1;height:2px;background:#fff}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
+  @media(min-width:1200px){.grid{grid-template-columns:repeat(5,1fr)}}
+
+  .card{background:#fff;color:var(--ink);display:flex;flex-direction:column;padding:12px 14px 14px;min-height:290px;cursor:pointer;transition:box-shadow .15s}
+  .card:hover{box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  .card .img{height:126px;display:flex;align-items:center;justify-content:center;margin:0 0 14px}
+  .card .img img{max-height:126px;max-width:100%;object-fit:contain}
+  .card h2{font-size:14px;font-weight:900;line-height:1.35;margin:0 0 3px}
+  .card:hover h2{text-decoration:underline}
+  .meta{font-size:13px;color:var(--muted);line-height:1.4}
+  .meta .brand{font-weight:700}
+  .meta .was{color:var(--red)}
+  .card .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;min-height:56px}
+  .price{color:var(--blue);font-weight:900;font-size:40px;letter-spacing:-.02em;line-height:1}
+  .price.dec{font-size:28px}
+  .price.sale{color:var(--red)}
+  .add{width:36px;height:36px;border:2px solid var(--green);background:#fff;color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:0}
+  .add .mi{font-size:22px}
+  .add.on{background:var(--green);color:#fff}
+  .add .q{position:absolute;top:-9px;right:-9px;background:var(--blue-dark);color:#fff;font-size:11px;font-weight:900;border-radius:10px;padding:1px 5px}
+
+  /* Product detail */
+  .pdp{display:grid;grid-template-columns:1fr;gap:24px;padding:16px 0 30px}
+  @media(min-width:760px){.pdp{grid-template-columns:1fr 1fr}}
+  .pdp .gal{background:#fff;padding:24px;display:flex;align-items:center;justify-content:center;min-height:360px}
+  .pdp .gal img{max-width:100%;max-height:420px;object-fit:contain}
+  .pdp h1{font-size:26px;font-weight:900;line-height:1.2;margin:0 0 4px;color:var(--ink)}
+  .pdp .price{font-size:44px;margin:16px 0 18px}
+  .pdp .price.dec{font-size:34px}
+  .buy{width:100%;background:var(--green);color:#fff;border:0;height:52px;font-weight:900;font-size:14px;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+  .buy:hover{background:var(--green-dark)}
+  .qtyrow{display:flex;gap:10px;align-items:stretch}
+  .qtyrow .buy{flex:1}
+  .stepper{display:flex;align-items:center;border:2px solid var(--green);background:#fff}
+  .stepper button{width:44px;height:48px;border:0;background:#fff;color:var(--green);font-size:22px;font-weight:900;cursor:pointer}
+  .stepper span{min-width:34px;text-align:center;font-weight:900;font-size:16px}
+  .inbasket{font-size:13px;color:var(--green-dark);font-weight:700;margin-top:8px;min-height:18px}
+  .acc2{background:#fff;margin-top:14px}
+  .acc2 details{border-bottom:1px solid var(--line)}
+  .acc2 summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:16px 14px;font-weight:900;font-size:13px;text-transform:uppercase}
+  .acc2 summary::-webkit-details-marker{display:none}
+  .acc2 summary .mi{color:var(--blue);transition:transform .15s}
+  .acc2 details[open] summary .mi{transform:rotate(180deg)}
+  .acc2 .body{padding:0 14px 16px;font-size:14px;line-height:1.6;color:var(--ink)}
+  .acc2 .body p{margin:0 0 10px}
+  .acc2 .body ul{margin:0 0 10px;padding-left:20px}
+  .acc2 table{font-size:14px;border-collapse:collapse;width:100%}
+  .acc2 td{padding:5px 0;border-bottom:1px solid var(--line)}
+  .acc2 td:first-child{color:var(--muted);width:45%}
+  .alt h4{font-size:13px;font-weight:900;margin:10px 0 2px;text-transform:uppercase}
+  .alt small{color:var(--muted);font-size:12px}
+  .alt .grid{margin-top:10px}
+
+  /* Basket / checkout */
+  .co{display:grid;grid-template-columns:1fr;gap:20px;padding:16px 0 10px}
+  @media(min-width:860px){.co{grid-template-columns:1.7fr 1fr}}
+  .co h1{font-size:24px;font-weight:900;margin:0 0 12px;color:var(--ink)}
+  .lines{background:#fff}
+  .line{display:grid;grid-template-columns:72px 1fr auto auto;gap:14px;align-items:center;padding:14px;border-bottom:1px solid var(--line)}
+  .line img{width:72px;height:72px;object-fit:contain;cursor:pointer}
+  .line .nm{font-weight:900;font-size:14px;cursor:pointer;color:var(--ink)}
+  .line .nm:hover{text-decoration:underline}
+  .line .rm{background:none;border:0;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;padding:4px 0 0}
+  .line .stepper{border-width:1px;border-color:#c8d0d8}
+  .line .stepper button{width:34px;height:36px;font-size:18px}
+  .line .lt{font-weight:900;font-size:18px;color:var(--ink);min-width:80px;text-align:right}
+  .empty{background:#fff;padding:40px 20px;text-align:center;color:var(--muted)}
+  .empty .buy{width:auto;display:inline-flex;padding:0 28px;margin-top:16px;height:46px;background:var(--blue)}
+  .summary{background:#fff;padding:18px;align-self:start;position:sticky;top:130px}
+  .summary h2{font-size:15px;font-weight:900;margin:0 0 14px;text-transform:uppercase}
+  .summary .row{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;color:var(--ink)}
+  .summary .row.total{border-top:2px solid var(--ink);margin-top:10px;padding-top:12px;font-weight:900;font-size:18px}
+  .summary .note{font-size:12px;color:var(--muted);margin:10px 0 16px;line-height:1.5}
+  .summary .buy[disabled]{background:#b9c2cb;cursor:not-allowed}
+  .back{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:14px;margin-top:14px}
+
+  .done{background:#fff;max-width:640px;margin:30px auto;padding:36px 30px;text-align:center}
+  .done .tick{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+  .done .tick .mi{font-size:40px}
+  .done h1{font-size:26px;font-weight:900;margin:0 0 8px}
+  .done p{color:var(--ink);line-height:1.55;margin:0 0 6px}
+  .done table{width:100%;margin:22px 0 8px;border-collapse:collapse;font-size:14px;text-align:left}
+  .done td{padding:7px 4px;border-bottom:1px solid var(--line)}
+  .done td:last-child{text-align:right;font-weight:800}
+  .researcher{margin-top:28px;padding-top:16px;border-top:1px dashed #c8d0d8;font-size:12px;color:var(--muted);display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .researcher button{background:none;border:1px solid #c8d0d8;color:var(--muted);font-size:12px;padding:6px 10px;cursor:pointer}
+
+  footer{margin:120px 34px 0;border-top:1px solid #dadfe4;padding:40px 0 30px;font-size:13px;color:#3b4552}
+  footer h3{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;color:#1a1a1a;margin:0 0 10px;text-transform:uppercase}
+  footer p{margin:0 0 54px;line-height:1.55}
+  .flag{width:28px;height:20px;border-radius:3px;background:var(--red);position:relative;overflow:hidden}
+  .flag::before{content:"";position:absolute;left:8px;top:0;width:4px;height:100%;background:#fff}
+  .flag::after{content:"";position:absolute;top:8px;left:0;height:4px;width:100%;background:#fff}
+  .phone{width:24px;height:24px;border-radius:3px;background:#5d6b7d;color:#fff;display:flex;align-items:center;justify-content:center}
+  .phone .mi{font-size:16px}
+  .acc div{border-bottom:1px solid #dadfe4;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:900;font-size:13px;color:#1a1a1a;text-transform:uppercase}
+  .acc{border-top:1px solid #dadfe4}
+  .acc .mi{color:var(--blue);font-size:22px}
+  .pay{margin-top:40px}
+  .pay h4{margin:0 0 6px;font-size:13px;font-weight:900;color:#1a1a1a}
+  .cards{display:flex;align-items:center;gap:14px}
+  .dk{background:var(--red);color:#fff;font-style:italic;font-weight:900;font-size:15px;padding:3px 6px;border-radius:2px}
+  .visa{color:#1a1f71;font-style:italic;font-weight:900;font-size:28px;letter-spacing:-.02em}
+  .mc{display:flex}.mc i{width:16px;height:16px;border-radius:50%;display:block}
+  .copy{margin-top:40px;font-weight:900;color:#1a1a1a;text-transform:uppercase}
+  .chat{position:fixed;left:6px;bottom:48px;width:56px;height:56px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  .chat .mi{font-size:30px}
+
+  /* ===== Føtex-style theme ===== */
+  :root{--navy:#000037;--fxblue:#3264ff;--fxgrey:#555;--fxline:#eeede8}
+  body{font-family:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#000;background:#fff}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+  header.fx{background:var(--navy);padding:0;position:sticky;top:0;z-index:20}
+  header.fx .topbar{font-size:13px;color:#fff;font-weight:500}
+  header.fx .topbar .wrap{display:flex;gap:22px;height:30px;align-items:center}
+  header.fx .topbar .sp{flex:1}
+  header.fx .bar{display:flex;align-items:center;gap:26px;height:auto;padding:8px 18px 16px}
+  header.fx .logo{height:auto}
+  .badgelogo{display:block;border:2px solid #fff;border-radius:16px;color:#fff;font-weight:700;font-size:16px;line-height:.95;letter-spacing:-.02em;padding:9px 10px;text-align:center}
+  header.fx .search{flex:1;max-width:560px;margin:0;height:46px;border-radius:4px;padding:0 4px 0 14px;background:#fff}
+  header.fx .search input{font-size:16px;color:#000}
+  header.fx .search input::placeholder{color:#666}
+  header.fx .search .clear{border:0;color:#444;font-size:22px;padding:0 10px}
+  header.fx .search .go{color:var(--navy);border-left:1px solid #ccc;height:28px;padding:0 10px 0 12px;margin-left:4px}
+  .hbtn{background:none;border:0;color:#fff;font:500 16px "Barlow",sans-serif;cursor:pointer;padding:6px 4px}
+  header.fx .cart{background:var(--navy);border:1px solid #fff;border-radius:4px;height:42px;padding:0 14px;gap:6px;font:500 16px "Barlow",sans-serif;position:relative}
+  header.fx .cart .badge{position:absolute;top:-10px;right:-10px;left:auto;background:var(--fxblue);border:2px solid #fff;border-radius:50%;width:22px;height:22px;padding:0;display:flex!important;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+  .qac{top:46px;border-radius:0 0 4px 4px;padding:4px 0 8px;border-top:1px solid #e5e5e5;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+  .qac li{padding:6px 14px;font-size:15px;color:#000;gap:8px}
+  .qac li>.mi:first-child{display:none}
+  .qac li b{font-weight:700}
+  .qac li.act{background:#f0f2f7}
+  .qac li:hover{background:#ececec}
+  .page{background:#fff;max-width:1200px;margin:0 auto 40px;padding:22px 18px 30px}
+  .ph{font-size:34px;font-weight:600;color:#1d2f54;margin:0 0 6px}
+  .count{display:block;height:auto;font-weight:400;font-size:14px;color:var(--fxgrey);text-transform:none;letter-spacing:0;text-align:center;margin:6px 0 14px}
+  .count::before,.count::after{display:none}
+  .grid{gap:14px}
+  .card{border:1px solid var(--fxline);border-radius:4px;padding:16px;min-height:0;color:var(--navy)}
+  .card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card .img{height:150px;margin-bottom:14px}
+  .card .img img{max-height:150px}
+  .card h2{font-size:18px;font-weight:600;color:var(--navy);line-height:1.2;margin:0 0 4px;min-height:44px}
+  .card:hover h2{text-decoration:underline}
+  .card .spec{font-size:13px;color:var(--fxgrey);margin-bottom:6px}
+  .card .prow{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+  .card .ship{font-size:10px;color:var(--fxgrey)}
+  .card .ship .was{font-size:12px;color:#d0021b}
+  .card .fprice{font-size:18px;font-weight:600;color:var(--navy)}
+  .card .fprice.sale{color:#d0021b}
+  .card .unit{font-size:12px;color:var(--fxgrey);border-bottom:1px solid #ddd;padding:6px 0 4px;margin-bottom:8px}
+  .card .avail{list-style:none;margin:0;padding:0;font-size:14px;color:var(--fxgrey)}
+  .card .avail li{display:flex;align-items:center;gap:8px;padding:1px 0}
+  .card .avail .ok{color:#2e9e4f;font-size:16px}
+  .pdp{gap:24px;padding:4px 0 30px}
+  .pdp .gal{border:1px solid var(--fxline);border-radius:4px}
+  .buybox{background:#f4f4f4;padding:14px;align-self:start;color:#000}
+  .buybox .brandname{color:var(--navy);font-size:16px;margin-bottom:4px}
+  .buybox h1{font-size:24px;font-weight:600;color:#000;margin:0 0 6px}
+  .buybox .spec{color:var(--fxgrey);font-size:15px;margin-bottom:26px}
+  .pricerow{display:flex;justify-content:space-between;align-items:flex-end;padding:0 10px 16px}
+  .unitline{font-size:15px;color:var(--fxgrey);margin-bottom:10px}
+  .unitline b{color:#000;font-weight:600}
+  .unitline .was{color:#d0021b}
+  .bigprice{font-size:42px;font-weight:600;color:#242930;line-height:1}
+  .bigprice.sale{color:#d0021b}
+  .buybox .stepper{border:1px solid #ccc;background:#fff;border-radius:4px;display:inline-flex}
+  .buybox .stepper button{width:36px;height:38px;color:var(--navy);font-size:18px}
+  .dtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .dtabs div{background:#fff;border:1px solid #e3e3e3;text-align:center;padding:8px 6px;color:var(--navy);display:flex;flex-direction:column;font-size:12px}
+  .dtabs div b{font-size:15px;font-weight:600}
+  .dtabs div.on{border:2px solid var(--navy)}
+  .stockbox{background:#fff;padding:14px 12px}
+  .stock{display:flex;align-items:center;gap:8px;font-size:15px;color:#000;margin-bottom:12px}
+  .stock i{width:8px;height:8px;border-radius:50%;background:#2e9e4f;display:block}
+  .buybox .buy,.summary .buy{background:var(--fxblue);border-radius:4px;height:42px;font:400 16px "Barlow",sans-serif;letter-spacing:0;text-transform:none}
+  .buybox .buy:hover,.summary .buy:hover{background:#2450d8}
+  .stockbox .dl{display:block;color:var(--navy);font-size:14px;margin-top:12px;text-decoration:underline;cursor:default}
+  .inbasket{color:#2e7d32}
+  .acc2{border:1px solid var(--fxline);margin-top:12px}
+  .acc2 summary{font-size:16px;font-weight:600;text-transform:none;color:#000}
+  .acc2 summary .mi{color:#000}
+  .alt h4{font-size:22px;font-weight:600;text-transform:none;color:#1d2f54;margin:10px 0 0}
+  .co h1{font-size:30px;font-weight:600;color:#1d2f54}
+  .lines,.summary{border:1px solid var(--fxline);border-radius:4px}
+  .line .nm{font-size:16px;font-weight:600;color:var(--navy)}
+  .line .lt{color:var(--navy);font-weight:600}
+  .summary{top:150px}
+  .summary h2{font-size:18px;font-weight:600;text-transform:none}
+  .done h1{color:#1d2f54;font-weight:600}
+  .done .tick{background:#2e9e4f}
+  .empty .buy{background:var(--fxblue);border-radius:4px}
+  .drawer a{font-weight:600;color:var(--navy)}
+  .home .hero{background:linear-gradient(120deg,#000037 0%,#1d2f8f 100%);color:#fff;border-radius:6px;padding:28px 40px;margin-top:6px;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:24px;min-height:300px}
+  .home .heroimg{width:100%;max-height:300px;display:block}
+  .home .hero h1{font-size:38px;font-weight:600;margin:0 0 10px}
+  .home .hero p{font-size:18px;margin:0;max-width:560px;opacity:.9}
+  .home .usps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+  .home .usps div{border:1px solid var(--fxline);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:2px;color:var(--navy)}
+  .home .usps .mi{font-size:28px;margin-bottom:6px}
+  .home .usps b{font-size:17px;font-weight:600}
+  .home .usps span:last-child{color:var(--fxgrey);font-size:14px}
+  .done .cont{width:auto;display:inline-flex;padding:0 32px;margin-top:18px;background:var(--fxblue);border-radius:4px;height:44px;font:400 16px "Barlow",sans-serif;text-transform:none;letter-spacing:0}
+  .card .addrow{display:flex;justify-content:flex-end;margin-top:2px}
+  .card .add{border:0;background:var(--fxblue);color:#fff;border-radius:4px;width:44px;height:38px}
+  .card .add:hover{background:#2450d8}
+  .card .add.on{background:#2450d8;color:#fff}
+  .card .add .mi{font-size:22px}
+  .card .add .q{background:var(--navy);border:2px solid #fff;top:-10px;right:-10px;border-radius:50%;min-width:22px;height:22px;padding:0 4px;display:flex;align-items:center;justify-content:center}
+  .line .stepper button{color:var(--navy)}
+  .back{color:var(--navy)}
+  .summary .row.total{font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="drawer-bg" onclick="document.body.classList.remove('menu-open')"></div>
+
+<header class="fx">
+  <div class="topbar"><div class="wrap"><span>groceriestogo.dk</span><span>Groceries ToGo at home</span><span>Groceries ToGo plus</span><span class="sp"></span><span>About us</span><span>Customer service</span></div></div>
+  <div class="wrap bar">
+    <a class="logo" href="#/" aria-label="Groceries ToGo"><span class="badgelogo">groceries<br>togo</span></a>
+    <form class="search" id="searchform" autocomplete="off" role="search">
+      <input id="q" placeholder="Search more than 35,000 products" aria-label="Search" aria-autocomplete="list" aria-controls="qac" spellcheck="false">
+      <span class="clear mi" id="qclear" title="Clear" data-i="close"></span>
+      <button class="go" type="button" aria-label="Search" onmousedown="event.preventDefault();document.getElementById('q').focus();drawQac()"><span class="mi" data-i="search"></span></button>
+      <ul class="qac" id="qac" role="listbox"></ul>
+    </form>
+    <div class="spacer"></div>
+    <button class="cart" onclick="go('#/basket')"><span class="mi" data-i="shopping_cart"></span><span id="cartlabel">Basket</span><span class="badge" id="badge">0</span></button>
+  </div>
+</header>
+
+<div class="rp-bg" id="rpbg"></div>
+<aside class="rp" id="rp">
+  <h2>Researcher panel <button type="button" id="rpclose">×</button></h2>
+  <p class="rp-hint">Hidden from participants. Open with <b>Ctrl + Shift + E</b> or by adding <b>?admin</b> to the address.</p>
+  <label>Participant ID <input id="rp-pid" placeholder="e.g. P01"></label>
+  <label>Condition
+    <select id="rp-cond">
+      <option value="eco-top">Sustainable first – sustainable suggestions ranked at the top</option>
+      <option value="eco-bottom">Sustainable last – sustainable suggestions ranked at the bottom</option>
+      <option value="as-listed">Mixed – sustainable and regular suggestions in the order written below</option>
+      <option value="control">Control – no sustainable suggestions</option>
+    </select></label>
+  <label class="rp-row"><input type="checkbox" id="rp-hl"> Highlight sustainable suggestions (green #56C02B background, 15%)</label>
+  <label class="rp-row"><input type="checkbox" id="rp-badge"> Show leaf icon next to sustainable suggestions</label>
+  <p class="rp-hint" id="rp-lock"></p>
+  <label>Max suggestions shown <input id="rp-max" type="number" min="1" max="10" style="width:70px"></label>
+  <label>Suggestion lists
+    <textarea id="rp-sugg" spellcheck="false"></textarea></label>
+  <p class="rp-hint">One line per search term: <code>term: suggestion | *sustainable suggestion | …</code><br>A <b>*</b> at the start marks a suggestion as sustainable. Suggestions are matched as the participant types (e.g. "wat" → the water bottle line).</p>
+  <div class="rp-btns">
+    <button type="button" id="rp-save" class="primary">Save &amp; start new session</button>
+    <button type="button" id="rp-defaults">Restore default lists</button>
+    <button type="button" id="rp-dl">Download current session data</button>
+  </div>
+  <p class="rp-hint" id="rp-status"></p>
+</aside>
+<div class="added" id="added"><span class="mi" data-i="check_circle"></span><span id="addedtxt"></span></div>
+
+<div id="view"></div>
+
+
+<script>
+/* SITE LOCK: set per test site. null = development version with all options. */
+const LOCK={"site": "Db", "cond": "as-listed", "highlight": true, "label": "Site D-b – Sustainable at positions 2, 5, 6; always highlighted green", "ecoPos": [2, 5, 6]};
+const KEY=LOCK?'site'+LOCK.site:'dev';
+/* ---------------- DATA ---------------- */
+const CATS = [
+  {slug:"water-bottles",name:"Water bottles",path:[]},
+  {slug:"lunch-boxes",name:"Lunch boxes",path:[]},
+  {slug:"food-containers",name:"Food containers",path:[]}
+];
+const PRODUCTS = [
+{
+"id": "w1",
+"cat": "water-bottles",
+"name": "PurePower water bottle - 800 ml",
+"brand": "PurePower",
+"qty": "1 pc",
+"unit": "55.00/pc",
+"price": 55,
+"img": "6936ece0d2e22b1ca23975e2016bae4d",
+"lead": "800 ml",
+"desc": "PurePower's water bottle is a great fitness bottle that holds 800 ml. It has a tight-fitting lid that prevents leaks and an ergonomic shape that makes it easy to hold. Ideal for the gym, a run or the office.",
+"was": null,
+"eco": false
+},
+{
+"id": "w2",
+"cat": "water-bottles",
+"name": "High5 water bottle - 750 ml",
+"brand": "High5",
+"qty": "1 pc",
+"unit": "42.00/pc",
+"price": 42,
+"img": "6331cf00-7c08-4b5c-aed9-9045015ecb5e",
+"lead": "750 ml",
+"desc": "The High5 drinking bottle is ideal for all kinds of sports. It holds 750 ml of water and fits most standard bicycle bottle cages. The spout makes it easy and convenient to drink from during activity.\n\nMade from quality materials so it stays leak-tight. BPA and phthalate free.",
+"was": null,
+"eco": false
+},
+{
+"id": "w3",
+"cat": "water-bottles",
+"name": "ASG water bottle 500 ml - stainless steel",
+"brand": "ASG",
+"qty": "1 pc",
+"unit": "99.00/pc",
+"price": 99,
+"img": "b3f719e720782b22131a17fe247dfff6",
+"lead": "Stainless steel",
+"desc": "A smart training bottle from ASG in stainless steel that holds 500 ml. Use it at work, at home or at the gym.",
+"was": null,
+"eco": true
+},
+{
+"id": "w4",
+"cat": "water-bottles",
+"name": "Water bottle grey - 0.7 litre",
+"brand": "",
+"qty": "1 pc",
+"unit": "20.00/pc",
+"price": 20,
+"img": "34121efc527b23bbe622cf628661cb8d",
+"lead": "Incl. drinking lid with straw",
+"desc": "This practical, modern water bottle holds 0.7 litres and comes in a stylish smoke-coloured transparent plastic with a black lid and a soft, non-slip silicone grip. Perfect for everyday use – at work, at school, for sports or on the go.\n\nThe drinking lid with a straw makes it easy to drink without tipping the bottle. Made from safe materials that tolerate temperatures up to 60 °C.",
+"was": null,
+"eco": false
+},
+{
+"id": "w5",
+"cat": "water-bottles",
+"name": "Pokémon water bottle - 420 ml",
+"brand": "Pokémon",
+"qty": "1 pc",
+"unit": "89.00/pc",
+"price": 89,
+"img": "e32c6a68-24f7-4493-bf9a-801ad478ebe0",
+"lead": "Incl. practical spout with straw",
+"desc": "The Pokémon water bottle opens with a screw lid and has a practical spout with a straw that flips up. The lid has a loop so it can be clipped onto a school bag. Holds 420 ml and measures 18 x 6 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "w6",
+"cat": "water-bottles",
+"name": "Im Cute drinking bottle - taupe - 350 ml",
+"brand": "Im Cute",
+"qty": "1 pc",
+"unit": "60.00/pc",
+"price": 60,
+"img": "ab7b820f301372cb380b5f815ca158bc",
+"lead": "350 ml",
+"desc": "The taupe 350 ml drinking bottle from Im Cute keeps drinks fresh and easy to reach. Its compact size makes it perfect for children and practical to take on the go. Make sure the lid is properly closed to avoid spills.",
+"was": null,
+"eco": false
+},
+{
+"id": "w7",
+"cat": "water-bottles",
+"name": "Sistema stainless steel bottle - 600 ml - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "229.00/pc",
+"price": 229,
+"img": "bcfa8d2c302b606fe17efbcf9403cd4c",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Stainless Steel 600 ml from Sistema is the perfect insulated bottle for an active lifestyle. It is double insulated to hold the temperature longer and made of high-quality stainless steel that won't rust over time. The 100% leak-proof insulated lid means you can carry it in your bag without worry. Perfect for school, work, sport and leisure.\n\nKeeps drinks cool for up to 12 hours and hot for up to 6 hours. Not suitable for the dishwasher, microwave, freezer or fizzy drinks.\n\nNOTE: This item is assorted, and a specific colour cannot be guaranteed.",
+"was": null,
+"eco": true
+},
+{
+"id": "w8",
+"cat": "water-bottles",
+"name": "Water bottle matt blue - 1 litre",
+"brand": "",
+"qty": "1 pc",
+"unit": "20.00/pc",
+"price": 20,
+"img": "73fcc65db4542738809b5d2c5fd4bd88",
+"lead": "Incl. carrying strap and click lid",
+"desc": "This robust, functional water bottle holds 1 litre and is ideal for training, school, work and everyday use. Made in matt blue plastic with a solid, modern design.\n\nThe practical click lid with lock keeps it tight and is easy to open with one hand. A soft carrying strap makes it easy to take with you. Tolerates contents up to 60 °C.",
+"was": null,
+"eco": false
+},
+{
+"id": "w9",
+"cat": "water-bottles",
+"name": "Sistema Quick Flip drinking bottle - 520 ml - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "99.00/pc",
+"price": 99,
+"img": "f24e2440687065a852cd2137383909da",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Tritan Quick Flip from Sistema is a bestseller among schoolchildren. Made of super-strong, shatterproof, scratch-resistant Tritan plastic. One press of the button and a silicone straw pops up. Tritan is very impact resistant, crystal clear and does not affect taste. The bottle comes apart for easy cleaning.\n\nDishwasher and freezer safe. 100% phthalate free. Contents: 520 ml.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "w10",
+"cat": "water-bottles",
+"name": "Water bottle - 500 ml - stainless steel",
+"brand": "",
+"qty": "1 pc",
+"unit": "20.00/pc",
+"price": 20,
+"img": "1064e2f8ce4287b7ab177716d90ce2d4",
+"lead": "Water bottle in steel",
+"desc": "A sleek, functional green water bottle in steel that holds 500 ml. Ideal for everyday use – at work, for training or on the go.",
+"was": null,
+"eco": true
+},
+{
+"id": "w11",
+"cat": "water-bottles",
+"name": "ASG water bottle 610 ml",
+"brand": "ASG",
+"qty": "1 pc",
+"unit": "69.00/pc",
+"price": 69,
+"img": "333e89b4c936b262078f33ee9b362e49",
+"lead": "PP plastic",
+"desc": "A smart fitness bottle from ASG in PP plastic that holds 610 ml. Use it at work, at home or at the gym.",
+"was": null,
+"eco": false
+},
+{
+"id": "w12",
+"cat": "water-bottles",
+"name": "Drinking bottle 300 ml - Frozen",
+"brand": "",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "be680c1ec41d59256d401446f49fcab2",
+"lead": "Double-walled drinking bottle",
+"desc": "This drinking bottle from the Twinkle Thirst collection is perfect for Frozen fans, with Anna and Elsa on the bottle. The integrated straw and sturdy handle make it easy to use on the go. The transparent bottle with a blue lid holds 300 ml – ideal for school, outings or sport.\n\nNot suitable for the dishwasher, microwave or oven.",
+"was": null,
+"eco": false
+},
+{
+"id": "w13",
+"cat": "water-bottles",
+"name": "SCO drinking bottle 600 ml - transparent",
+"brand": "SCO",
+"qty": "1 pc",
+"unit": "45.00/pc",
+"price": 45,
+"img": "06cca93f4aa7f75755d64f6c32ea3661",
+"lead": "Perfect for bike rides",
+"desc": "The SCO drinking bottle is great for both short and long bike rides. It's light to carry and fits most bottle cages on a bike.\n\n- Practical for bike rides\n- Fits standard bottle cages\n- Easy to open and close while riding\n- For cold and room-temperature drinks\n- Easy to clean",
+"was": null,
+"eco": false
+},
+{
+"id": "w14",
+"cat": "water-bottles",
+"name": "Thermo flask 0.5 litre - navy",
+"brand": "",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "64b7c8b323bf92d594144e4abb55bc0b",
+"lead": "Keeps your drinks hot or cold for up to 6 hours",
+"desc": "A 0.5-litre thermo flask with a metallic finish for everyday use and outings. Made of steel and keeps hot drinks hot and cold drinks cold – for coffee on the go or cold water for training, at work or in the garden.\n\n- Capacity: 0.5 litre\n- Material: steel\n- Keeps drinks hot or cold for up to 6 hours\n- Not dishwasher safe",
+"was": null,
+"eco": true
+},
+{
+"id": "w15",
+"cat": "water-bottles",
+"name": "Salling drinking bottle 800 ml - black",
+"brand": "Salling",
+"qty": "1 pc",
+"unit": "18.00/pc",
+"price": 18,
+"img": "fae18ec7e458d45f940264d73b4622cc",
+"lead": "800 ml with flip straw",
+"desc": "A sleek, functional drinking bottle with a modern design and the text \"BRUHH\". Ideal for school, work and training. The flip-straw lid makes it quick to open and drink with one hand, and 800 ml means you have enough for the whole day.\n\n- Capacity: 800 ml\n- Material: PP, PET, PS, PE and silicone\n- With flip straw\n- For cold drinks",
+"was": null,
+"eco": false
+},
+{
+"id": "w16",
+"cat": "water-bottles",
+"name": "Water bottle green - 0.75 litre",
+"brand": "",
+"qty": "1 pc",
+"unit": "20.00/pc",
+"price": 20,
+"img": "e49b3c2d2cff5687700e176bfd66e949",
+"lead": "Incl. drinking lid with spout",
+"desc": "This sleek water bottle holds 0.75 litres and combines function with modern looks. Made in transparent dark green plastic with an elegant ribbed design for a good grip. The drinking lid with spout lets you take a sip without unscrewing the lid. Tolerates temperatures up to 60 °C.",
+"was": null,
+"eco": false
+},
+{
+"id": "w17",
+"cat": "water-bottles",
+"name": "Steel drinking bottle 500 ml - Paw Patrol",
+"brand": "",
+"qty": "1 pc",
+"unit": "89.00/pc",
+"price": 89,
+"img": "e0c7fe16d3ef38654b9891cb3f9faff6",
+"lead": "Screw lid with built-in straw",
+"desc": "Paw Patrol fans will love this drinking bottle from the Take A Sip collection, with Chase and his friends all around the bottle. It holds 500 ml and has a blue screw lid that makes it easy to fill. The flip-up spout with straw makes it easy for children to drink on their own – ideal for school.\n\nNot suitable for the dishwasher, microwave or oven.",
+"was": null,
+"eco": true
+},
+{
+"id": "w18",
+"cat": "water-bottles",
+"name": "Mepal drinking bottle - Dino - 400 ml",
+"brand": "Mepal",
+"qty": "1 pc",
+"unit": "49.50/pc",
+"price": 49.5,
+"img": "fd278cee-061a-4091-9099-986ffe548d80",
+"lead": "Incl. pop-up system",
+"desc": "Mepal drinking bottle with a dino design. The well-known, robust bottle holds 400 ml, has a practical silicone strap and a smart pop-up mouthpiece released at the press of a button. Easy to take apart and clean.",
+"was": 99,
+"eco": false
+},
+{
+"id": "w19",
+"cat": "water-bottles",
+"name": "SCO water bottle - transparent - 550 ml",
+"brand": "SCO",
+"qty": "1 pc",
+"unit": "65.00/pc",
+"price": 65,
+"img": "1dfed6b782324de03b280c8dcafdfe22",
+"lead": "550 ml",
+"desc": "The SCO drinking bottle is great for both short and long bike rides. It's light to carry and fits most bottle cages on a bike.\n\n- Practical for bike rides\n- Fits standard bottle cages\n- Easy to open and close while riding\n- For cold and room-temperature drinks\n- Easy to clean",
+"was": null,
+"eco": false
+},
+{
+"id": "w20",
+"cat": "water-bottles",
+"name": "Steel drinking bottle 450 ml - car design",
+"brand": "",
+"qty": "1 pc",
+"unit": "20.00/pc",
+"price": 20,
+"img": "0752dc0514120a70c991632a7248cf46",
+"lead": "Incl. practical spout",
+"desc": "A colourful, child-friendly drinking bottle designed for both function and fun. Made of steel with a plastic lid. Holds 450 ml.",
+"was": null,
+"eco": true
+},
+{
+"id": "w21",
+"cat": "water-bottles",
+"name": "Drinking bottle with handle - 500 ml - assorted",
+"brand": "",
+"qty": "1 pc",
+"unit": "30.00/pc",
+"price": 30,
+"img": "b3ac6b9deaa95de0939128eb9b1d7660",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "A practical, stylish 500 ml drinking bottle – perfect for everyday use, training, work or outings. The sturdy handle in the lid makes it easy to carry.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "w22",
+"cat": "water-bottles",
+"name": "Sistema Hydrate stainless steel bottle - 500 ml - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "199.00/pc",
+"price": 199,
+"img": "25868f67ab49490a443778c495ba11ff",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Sistema Hydrate is a 500 ml stainless steel drinking bottle – perfect for school, work, sport and picnics. Double-wall vacuum insulation keeps the temperature of the contents, and the high-quality stainless steel won't rust over time.\n\nKeeps drinks hot for 6 hours and cool for 12 hours. Not suitable for the dishwasher, microwave, freezer or fizzy drinks.\n\nNOTE: This item is assorted, and a specific colour cannot be guaranteed.",
+"was": null,
+"eco": true
+},
+{
+"id": "w23",
+"cat": "water-bottles",
+"name": "Im Cute water bottle 450 ml - taupe",
+"brand": "Im Cute",
+"qty": "1 pc",
+"unit": "25.00/pc",
+"price": 25,
+"img": "9c18cb0742587f872da3c561c15e5a40",
+"lead": "Incl. practical spout",
+"desc": "A stylish, practical 450 ml water bottle from Im Cute – ideal for everyday use and activities. The soft taupe colour adds a modern touch, the sturdy build lasts, and the tight-fitting lid prevents leaks.",
+"was": null,
+"eco": false
+},
+{
+"id": "l1",
+"cat": "lunch-boxes",
+"name": "Lunch box with 3 compartments - 1.7 litres",
+"brand": "",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "ac415bfac52102d2f9ddedcfb216d96e",
+"lead": "1.7 litres",
+"desc": "Lunch box with 3 compartments. Holds 1.7 litres.",
+"was": null,
+"eco": false
+},
+{
+"id": "l2",
+"cat": "lunch-boxes",
+"name": "Pokémon lunch box - 1.3 litres",
+"brand": "Pokémon",
+"qty": "1 pc",
+"unit": "89.00/pc",
+"price": 89,
+"img": "0a192b9f-1cac-42c2-bc51-05606e9b7665",
+"lead": "Divided into 3 compartments",
+"desc": "Pokémon lunch box with 3 compartments, making it easy and practical to organise your food.",
+"was": null,
+"eco": false
+},
+{
+"id": "l3",
+"cat": "lunch-boxes",
+"name": "Stainless steel lunch box - 850 ml",
+"brand": "",
+"qty": "1 pc",
+"unit": "35.40/pc",
+"price": 35.4,
+"img": "3d6ea7b05cd7280d631bab4f88a836f3",
+"lead": "With movable divider",
+"desc": "Stainless steel lunch box, 850 ml, with a movable divider.\n\n- Size: 16.5 x 12.5 x 6 cm\n- Material: steel\n- Dishwasher safe",
+"was": null,
+"eco": true
+},
+{
+"id": "l4",
+"cat": "lunch-boxes",
+"name": "Tupperware lunch box 1 litre - Roots",
+"brand": "Tupperware Essentials",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "0d5de07ade4f1c6e8d68febcb5d552b8",
+"lead": "Ideal for storing food in the fridge",
+"desc": "The Tupperware rectangular 1-litre lunch box in Roots is a practical solution for packed lunches, leftovers and everyday food storage. The rectangular shape stacks easily in both fridge and bag. Made of durable, food-safe plastic with a tight-fitting lid that keeps food fresh during transport.\n\n- Capacity: 1 litre\n- Material: food-safe plastic",
+"was": null,
+"eco": false
+},
+{
+"id": "l5",
+"cat": "lunch-boxes",
+"name": "Sistema Lunch Cube lunch box - 1.4 litres - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "59.00/pc",
+"price": 59,
+"img": "bc44cc7094f0a23406dc56e221dc4491",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Lunch Cube from Sistema is a bestseller because children love compartments. The square box is easy to handle, even for the youngest. The top holds a sandwich and vegetables; the bottom is split into two compartments for sides and snacks. Held securely closed with an easy-lock system.\n\nDishwasher (top rack), freezer and microwave (without lid) safe. 100% phthalate free. 1.4 L.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "l6",
+"cat": "lunch-boxes",
+"name": "Mepal lunch box - Dino",
+"brand": "Mepal",
+"qty": "1 pc",
+"unit": "49.50/pc",
+"price": 49.5,
+"img": "3df0288f-3df0-42b1-8c83-eb27d26dff13",
+"lead": "Incl. small fork and 2-compartment insert",
+"desc": "Mepal lunch box with a dino design and an improved closing mechanism that's even easier for children. Measures 17.5 x 13 x 6 cm and includes a small fork and a removable insert with two small compartments. Closes completely tight – the lid clicks on and opens with a button on the front, so it won't open in the bag.\n\nDishwasher safe.",
+"was": 99,
+"eco": false
+},
+{
+"id": "l7",
+"cat": "lunch-boxes",
+"name": "Salling lunch box with 2 compartments - stainless steel - assorted",
+"brand": "Salling",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "cbe8731c438f314358885d1ea5215a29",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "A functional lunch box for everyday life, with two separate compartments to keep food apart – perfect for lunch, snacks or leftovers.\n\nThe inside is stainless steel – hard-wearing, hygienic and easy to clean. The outside is robust plastic for a light design and a good grip. Ideal for children and adults, for school, work and outings.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": true
+},
+{
+"id": "l8",
+"cat": "lunch-boxes",
+"name": "Sistema Stack To Go lunch box - 1.8 litres",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "119.00/pc",
+"price": 119,
+"img": "e3b4b389c30656008512201d40b1975e",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Sistema Stack To Go is perfect as a lunch box or for picnic snacks. It's divided into 3 compartments over 2 layers, giving room for three different foods. Dishwasher and freezer safe. Colour cannot be chosen.",
+"was": null,
+"eco": false
+},
+{
+"id": "l9",
+"cat": "lunch-boxes",
+"name": "Salling lunch box - black",
+"brand": "Salling",
+"qty": "1 pc",
+"unit": "18.00/pc",
+"price": 18,
+"img": "a15ed5b8adb4accec927c79a3271b1a3",
+"lead": "With divider insert",
+"desc": "A practical, roomy lunch box in a sleek design with \"BRUHH\" on the lid. Perfect for school, work and outings. It has a large main compartment and an insert for separating foods. The click closure keeps the lid securely shut during transport.\n\n- Material: PP plastic\n- With divider insert\n- Click closure",
+"was": null,
+"eco": false
+},
+{
+"id": "l10",
+"cat": "lunch-boxes",
+"name": "Jas & Mika lunch box - 1.3 litres",
+"brand": "Peepz",
+"qty": "1 pc",
+"unit": "149.00/pc",
+"price": 149,
+"img": "35a5fddefa1fdc8b090d15cb65bd625f",
+"lead": "Size: 15 x 21 x 5 cm",
+"desc": "Make packed lunches more fun with a Jas & Mika lunch box, featuring the well-known pattern with Baloo on the lid – perfect for school and outings. 15 x 21 cm and 5 cm deep.",
+"was": null,
+"eco": false
+},
+{
+"id": "l11",
+"cat": "lunch-boxes",
+"name": "Sistema To Go lunch box - 1.24 litres",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "99.00/pc",
+"price": 99,
+"img": "072869aa3ffd181642e8fcc8bb4a7a79",
+"lead": "Leak-proof food storage",
+"desc": "Lunch Stack Square from Sistema is a smart lunch box with compartments that packs down after use. A large compartment suits salad or sandwiches, and a divided top container holds vegetables, fruit and snacks. When the top is empty, turn it over and nest it in the base so it takes up minimal space.\n\nDishwasher (top rack), freezer and microwave (without lid) safe. 100% phthalate free. 1.24 L.",
+"was": null,
+"eco": false
+},
+{
+"id": "l12",
+"cat": "lunch-boxes",
+"name": "Olsen Home lunch box with 2 compartments - stainless steel - assorted",
+"brand": "Olsen Home",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "9718398a5dcbb1136ec9bafff01baf4d",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Lunch box with stainless steel and 2 compartments.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": true
+},
+{
+"id": "l13",
+"cat": "lunch-boxes",
+"name": "Lunch box with 2 compartments - 1.1 litres",
+"brand": "",
+"qty": "1 pc",
+"unit": "69.00/pc",
+"price": 69,
+"img": "34d2d785b5f248292d31118bbeb1c9e2",
+"lead": "1.1 litres",
+"desc": "Lunch box with 2 compartments. Holds 1.1 litres.",
+"was": null,
+"eco": false
+},
+{
+"id": "l14",
+"cat": "lunch-boxes",
+"name": "Tupperware lunch box 550 ml - Cornish",
+"brand": "Tupperware",
+"qty": "1 pc",
+"unit": "59.00/pc",
+"price": 59,
+"img": "73d834e76aa1cc8ba7f969c61a22447b",
+"lead": "Ideal for storing food in the fridge",
+"desc": "The Tupperware square 550 ml lunch box in Cornish is a compact solution for smaller portions, snacks or packed lunches. Stacks easily in fridge and bag. Durable, food-safe plastic with a tight-fitting lid.\n\n- Capacity: 550 ml\n- Material: food-safe plastic",
+"was": null,
+"eco": false
+},
+{
+"id": "l15",
+"cat": "lunch-boxes",
+"name": "Morten Münster lunch box with compartments",
+"brand": "Morten Münster",
+"qty": "1 pc",
+"unit": "149.00/pc",
+"price": 149,
+"img": "58ad020023401430d3f311cc262728b7",
+"lead": "4 compartments",
+"desc": "Make lunch fun and practical with this durable lunch box inspired by YouTuber Morten Münster. Four roomy compartments keep food separate and organised all day. Dishwasher safe and measures 23.5 x 17.5 x 5.5 cm – fits easily in a bag.",
+"was": null,
+"eco": false
+},
+{
+"id": "l16",
+"cat": "lunch-boxes",
+"name": "Sistema Bento Cube lunch box - 1.25 litres - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "99.00/pc",
+"price": 99,
+"img": "09cc0ca5b14377753f4b32bac109dab0",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Make the packed lunch more fun and organised with Sistema Kids Bento Cube. This 1.25-litre lunch box has separate compartments for sandwiches, snacks, fruit and vegetables, keeping food fresh and appealing all day. Easy-lock clips let children open and close it themselves.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "l17",
+"cat": "lunch-boxes",
+"name": "Sistema Ribbon Lunch To Go lunch box - 1.1 litres",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "89.00/pc",
+"price": 89,
+"img": "4d7a653c8143fe99a4e22e07f95eab25",
+"lead": "Freezer, microwave and dishwasher safe",
+"desc": "Ribbon Lunch To Go from Sistema is a roomy, practical lunch box divided into sections to keep food and sides apart and fresh all day. The inserts can be removed for more space. Includes a small 130 ml Mini Bite To Go pot for nuts, dip or fruit.\n\nDishwasher (top rack), freezer and microwave (without lid) safe. 100% phthalate free. 1.1 L.",
+"was": null,
+"eco": false
+},
+{
+"id": "l18",
+"cat": "lunch-boxes",
+"name": "Niki Topgaard lunch box",
+"brand": "Peepz",
+"qty": "1 pc",
+"unit": "149.00/pc",
+"price": 149,
+"img": "144b982d6a268d09b01db7e60ad75beb",
+"lead": "4 compartments",
+"desc": "A functional, durable lunch box for children inspired by YouTuber Niki Topgaard, with four compartments that keep food separate and fresh all day. Robust, dishwasher safe and compact at 23.5 x 17.5 x 5.5 cm.",
+"was": null,
+"eco": false
+},
+{
+"id": "l19",
+"cat": "lunch-boxes",
+"name": "K-Pop rectangular lunch box - 1190 ml",
+"brand": "Stor",
+"qty": "1 pc",
+"unit": "59.00/pc",
+"price": 59,
+"img": "ca7df6fa1137c9ed4971890449a9ea7c",
+"lead": "Roomy 1190 ml lunch box",
+"desc": "A roomy 1190 ml lunch box in purple with a K-Pop Demon Hunters design. A good size for larger portions for older children and teenagers.",
+"was": null,
+"eco": false
+},
+{
+"id": "l20",
+"cat": "lunch-boxes",
+"name": "Lunch box 1.8 L - Christmas design",
+"brand": "",
+"qty": "1 pc",
+"unit": "39.00/pc",
+"price": 39,
+"img": "8807f1450c273cacc9a46ba226959427",
+"lead": "Divided into 3 compartments",
+"desc": "Lunch box with a Christmas design and 3 compartments, making it easy to organise your food.\n\nL: 20 x W: 15 x H: 6 cm",
+"was": null,
+"eco": false
+},
+{
+"id": "l21",
+"cat": "lunch-boxes",
+"name": "Sistema Slimline Quaddie lunch box - 1.5 litres",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "89.00/pc",
+"price": 89,
+"img": "e0029eae8464520608be86737152aafa",
+"lead": "Incl. small drinking bottle",
+"desc": "Slimline Quaddie from Sistema suits both school and work, with room for the packed lunch plus fruit and vegetables. The lid has three compartments and the base one large one. Includes a small flat 275 ml bottle that can also be frozen and used as a cooling element.\n\nNOTE: Not suitable for children under 8.",
+"was": null,
+"eco": false
+},
+{
+"id": "l22",
+"cat": "lunch-boxes",
+"name": "Lunch box - Spider-Man - red/blue",
+"brand": "",
+"qty": "1 pc",
+"unit": "55.00/pc",
+"price": 55,
+"img": "dd356aefc2c293ad1df61ddd6035928a",
+"lead": "Divided, ideal for packed lunches",
+"desc": "This Spider-Man lunch box from the Eat Yum Repeat collection is perfect for superhero fans. It closes securely with two sturdy side clips and fits easily in most bags.\n\nNot suitable for the dishwasher, microwave or oven.",
+"was": null,
+"eco": false
+},
+{
+"id": "f1",
+"cat": "food-containers",
+"name": "Food storage boxes - 6-pack",
+"brand": "",
+"qty": "6 pcs",
+"unit": "39.00/pc",
+"price": 39,
+"img": "a9d31055fba3fe2926dbdbcaaadb9f1c",
+"lead": "6 boxes in different sizes",
+"desc": "Keep track of leftovers, packed lunches and ingredients with this practical set of 6 food storage boxes. Suitable for dry goods and cooked dishes, helping keep food fresh for longer.\n\nThe tight-fitting lids make the boxes suitable for the fridge, freezer and transport. Different sizes give flexibility in everyday life.",
+"was": null,
+"eco": false
+},
+{
+"id": "f2",
+"cat": "food-containers",
+"name": "Arctic food storage box - 1.25 litres",
+"brand": "Plast1",
+"qty": "1 pc",
+"unit": "10.00/pc",
+"price": 10,
+"img": "856ddc6375ad59e38dbcda99bfe87626",
+"lead": "Freezer and microwave safe",
+"desc": "Arctic food storage box, 1.25 litres, from Plast1. Freezer and microwave safe.",
+"was": null,
+"eco": false
+},
+{
+"id": "f3",
+"cat": "food-containers",
+"name": "Rotho Nala food container square - glass - 1.1 litres",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "99.00/pc",
+"price": 99,
+"img": "a116623652c69965e03463efea4eb232",
+"lead": "1.1 litres. Size: 22.6 x 15.1 x 7 cm",
+"desc": "This 1.1-litre glass food container is the perfect choice for everyday use.\n\nSize: 22.6 x 15.1 x 7 cm",
+"was": null,
+"eco": true
+},
+{
+"id": "f4",
+"cat": "food-containers",
+"name": "Contain food storage 2-pack - 600 ml",
+"brand": "Contain",
+"qty": "2 pcs",
+"unit": "20.00/pc",
+"price": 20,
+"img": "c001d5c813125ed4cac2810a8c7f03a8",
+"lead": "Tight lid with silicone seal to prevent leaks",
+"desc": "Practical, sleek food storage boxes from Contain – perfect for smaller portions, snacks, leftovers or packed lunches. Each container holds 600 ml and has a lid with a silicone seal that keeps contents fresh for longer.\n\n- 600 ml per container, 2 pcs\n- Material: PET (container), PP (lid), silicone (seal)\n- Leak-proof lid\n- Good for the fridge and dry goods",
+"was": null,
+"eco": false
+},
+{
+"id": "f5",
+"cat": "food-containers",
+"name": "Sistema Lunch food storage - 3-pack - 400 ml",
+"brand": "Sistema",
+"qty": "1 pack",
+"unit": "69.00/pack",
+"price": 69,
+"img": "636601588ba86d4d88c596ec20269601",
+"lead": "3 per pack",
+"desc": "Three small Sistema storage boxes – a must-have in any kitchen drawer. The 400 ml size makes the most of space in your fridge, freezer and drawer. Sistema's easy-lock clips and flexible seal keep food fresh for longer. Transparent so you can see what's inside.\n\nStackable and safe in the dishwasher (top rack), microwave (without lid), fridge and freezer.",
+"was": null,
+"eco": false
+},
+{
+"id": "f6",
+"cat": "food-containers",
+"name": "Rotho Ela food container square - dark blue - 1 litre",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "75.00/pc",
+"price": 75,
+"img": "c3f9a12353d0a3ed57c3a04691760d87",
+"lead": "1 litre. Dishwasher safe",
+"desc": "- Innovative freshness box\n- Opens with one click and seals tight with one click\n- 100% leak-proof and airtight seal\n- Perfect for takeaway\n- Modern design\n- Ideal for storing in the fridge\n- Microwave safe without lid\n- Dishwasher safe\n- 100% recyclable",
+"was": null,
+"eco": true
+},
+{
+"id": "f7",
+"cat": "food-containers",
+"name": "Airtight food storage - 0.9 litre",
+"brand": "Plast Team",
+"qty": "1 pc",
+"unit": "39.00/pc",
+"price": 39,
+"img": "fc14b1c6340b333dbf36bd5fa4ab5a3b",
+"lead": "0.9 litre",
+"desc": "Airtight food storage. Size: 14 x 22 x 5 cm",
+"was": null,
+"eco": false
+},
+{
+"id": "f8",
+"cat": "food-containers",
+"name": "Køkkenchef food storage set - 3.3 + 1.5 litres",
+"brand": "Køkkenchef",
+"qty": "2 pcs",
+"unit": "25.00/pc",
+"price": 25,
+"img": "0182154c4202c396b957395b9272069e",
+"lead": "Freezer safe",
+"desc": "Upgrade your food storage with this Køkkenchef set of two boxes in different sizes – ideal for leftovers, snacks or meal prep at home. Each box has removable insert containers with a drain, so excess liquid is easily removed – great for fruit or vegetables.\n\n- Large: 23.5 x 23.5 x 8.5 cm (3.3 litres) with 5 inserts\n- Medium: 16.5 x 16.5 x 8.5 cm (1.5 litres) with 3 inserts\n- Plastic, suitable from -20 °C to 120 °C",
+"was": 50,
+"eco": false
+},
+{
+"id": "f9",
+"cat": "food-containers",
+"name": "Rotho Nala food container square - stainless steel - 1 litre",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "130.00/pc",
+"price": 130,
+"img": "9d17fc53f30d69141bca7584d3849556",
+"lead": "1 litre. Size: 22.5 x 15.1 x 6.5 cm",
+"desc": "This 1-litre stainless steel food container is the perfect choice for everyday use.\n\nSize: 22.5 x 15.1 x 6.5 cm",
+"was": null,
+"eco": true
+},
+{
+"id": "f10",
+"cat": "food-containers",
+"name": "Food storage box round - 1.5 litres",
+"brand": "Plast Team",
+"qty": "1 pc",
+"unit": "50.00/pc",
+"price": 50,
+"img": "d376e9317050608bf13ab7eb6761b461",
+"lead": "Microwave safe",
+"desc": "Round microwave box, 1.5 litres.",
+"was": null,
+"eco": false
+},
+{
+"id": "f11",
+"cat": "food-containers",
+"name": "Oslo food storage - 1.2 litres",
+"brand": "Plast Team",
+"qty": "1 pc",
+"unit": "25.00/pc",
+"price": 25,
+"img": "65873e861e4589c38c3043b9e6b4c307",
+"lead": "Plastic storage box",
+"desc": "Food storage for dry goods, 1.2 L. 10.9 x 16.8 x 10.5 cm, clear with black clips.",
+"was": 50,
+"eco": false
+},
+{
+"id": "f12",
+"cat": "food-containers",
+"name": "Rotho Nala food container round - glass - 1 litre",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "75.00/pc",
+"price": 75,
+"img": "ed5b9d4141419a56642c68574a069098",
+"lead": "1 litre. Size: 17 x 17 x 9.4 cm",
+"desc": "This 1-litre glass food container is the perfect choice for everyday use.\n\nSize: 17 x 17 x 9.4 cm",
+"was": null,
+"eco": true
+},
+{
+"id": "f13",
+"cat": "food-containers",
+"name": "Mepal EasyClip food storage - black - 3-pack",
+"brand": "Mepal",
+"qty": "1 pack",
+"unit": "339.00/pack",
+"price": 339,
+"img": "4b3441d59fcc11c9cc6be5bcc60acd34",
+"lead": "Freezer, microwave and dishwasher safe",
+"desc": "EasyClip is Mepal's series of rectangular storage boxes with a universal transparent lid that clips on and off with one hand. When you hear the click, the box is completely sealed – leak-, air- and aroma-tight. The clip also acts as a valve in the microwave, and the sealing ring can be removed for easier cleaning.\n\nThe boxes are made of PP plastic – robust, impact-resistant and recyclable. Suitable for the freezer, microwave and dishwasher.",
+"was": null,
+"eco": true
+},
+{
+"id": "f14",
+"cat": "food-containers",
+"name": "Rotho Airtight Clic&Lock food storage - 2 litres",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "55.00/pc",
+"price": 55,
+"img": "15695f319c3dc4b40fad470aa0ff6f41",
+"lead": "2 litres",
+"desc": "- 100% tight\n- Very good, robust quality\n- Proven safety lock with silicone seal\n- The wavy base keeps food dry\n- Nests inside each other to save space when not in use",
+"was": null,
+"eco": false
+},
+{
+"id": "f15",
+"cat": "food-containers",
+"name": "Sistema Lunch Plus food storage - 1.2 litres - assorted",
+"brand": "Sistema",
+"qty": "1 pc",
+"unit": "49.00/pc",
+"price": 49,
+"img": "4d28314f35591ded40de44cb1ad6b400",
+"lead": "Assorted – a specific variant cannot be guaranteed",
+"desc": "Lunch Plus from Sistema is a versatile box – for packed lunches, as a storage box in the fridge and much more. It fits a good portion of salad, a sandwich or open sandwiches. The easy-lock clips and rubber seal keep food fresh for longer, and it stacks with other Sistema products.\n\nDishwasher (top rack), freezer and microwave (without lid) safe. 100% phthalate free. 1.2 L.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "f16",
+"cat": "food-containers",
+"name": "Rotho Nala food container round - stainless steel - 900 ml",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "105.00/pc",
+"price": 105,
+"img": "8103970e484bd77da993c90536d463a1",
+"lead": "0.9 litre. Size: 17 x 17 x 8.1 cm",
+"desc": "This 0.9-litre stainless steel food container is the perfect choice for everyday use.\n\nSize: 17 x 17 x 8.1 cm",
+"was": null,
+"eco": true
+},
+{
+"id": "f17",
+"cat": "food-containers",
+"name": "Airtight food storage - 2 litres",
+"brand": "Plast Team",
+"qty": "1 pc",
+"unit": "50.00/pc",
+"price": 50,
+"img": "4021e7ee924737eab7c5fcea8456ae70",
+"lead": "2 litres",
+"desc": "Airtight food storage. Size: 14 x 22 x 10 cm",
+"was": null,
+"eco": false
+},
+{
+"id": "f18",
+"cat": "food-containers",
+"name": "Hamburg food storage - 1.6 litres",
+"brand": "Plast Team",
+"qty": "1 pc",
+"unit": "50.00/pc",
+"price": 50,
+"img": "06784978da8bf884c9b0d4ffbf5d8da3",
+"lead": "Plastic storage box",
+"desc": "Food storage box with lid, ideal for dry goods. Holds 1.6 litres and measures 13.5 x 13.5 x 17.6 cm. Keeps food organised and easy to reach.",
+"was": null,
+"eco": false
+},
+{
+"id": "f19",
+"cat": "food-containers",
+"name": "Rotho Nala food container square - glass - 750 ml",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "79.00/pc",
+"price": 79,
+"img": "9df2cf5d04daa0317f4901e97f3dadf5",
+"lead": "0.75 litre. Size: 15.5 x 11.7 x 10.6 cm",
+"desc": "This 0.75-litre glass food container is the perfect choice for everyday use.\n\nSize: 15.5 x 11.7 x 10.6 cm",
+"was": null,
+"eco": true
+},
+{
+"id": "f20",
+"cat": "food-containers",
+"name": "Sistema Knick Knack food storage - 138 ml",
+"brand": "Sistema",
+"qty": "1 pack",
+"unit": "59.00/pack",
+"price": 59,
+"img": "948897fa-404b-4085-b0cb-3ec6757ad512",
+"lead": "3 per pack",
+"desc": "3-pack of small containers for anything from nuts and raisins to clips. Freezer, microwave (without lid) and dishwasher safe. 100% free of phthalates and lead.\n\nNOTE: This item is assorted, and a specific variant cannot be guaranteed.",
+"was": null,
+"eco": false
+},
+{
+"id": "f21",
+"cat": "food-containers",
+"name": "DAY storage jar with screw lid - 500 ml",
+"brand": "DAY",
+"qty": "1 pc",
+"unit": "15.00/pc",
+"price": 15,
+"img": "386fe6b132af19b4f7e9e8fa05d8fbd8",
+"lead": "500 ml. Ribbed glass jar with black screw lid",
+"desc": "Glass storage jar with a screw lid, suitable for medium quantities. Perfect for storing oats, beans or other foods. The screw lid keeps the contents airtight.",
+"was": null,
+"eco": true
+},
+{
+"id": "f22",
+"cat": "food-containers",
+"name": "Rotho Ela food container round - light blue - 430 ml",
+"brand": "Rotho",
+"qty": "1 pc",
+"unit": "75.00/pc",
+"price": 75,
+"img": "42ecce19e16fbb685eae083e414255d9",
+"lead": "430 ml. Dishwasher safe",
+"desc": "- Innovative freshness box\n- Opens with one click and seals tight with one click\n- 100% leak-proof and airtight seal\n- Perfect for takeaway\n- Modern design\n- Ideal for storing in the fridge\n- Microwave safe without lid\n- Dishwasher safe\n- 100% recyclable",
+"was": null,
+"eco": true
+}
+];
+const BY_ID = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
+const IMG = (id,w=500)=>`https://digitalassets.sallinggroup.com/image/upload/e_trim:2/w_${w},h_${w},c_pad,ar_1,q_auto,f_auto,b_white,e_sharpen:80/t_DigitalAiLogo/${id}`;
+
+/* ---------------- ICONS ---------------- */
+const ICONS={
+ menu:"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+ person:"M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+ shopping_cart:"M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z",
+ add_shopping_cart:"M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z",
+ search:"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+ chevron_right:"M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+ chevron_left:"M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+ expand_more:"M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z",
+ phone:"M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z",
+ chat_bubble:"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z",
+ check_circle:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+close:"M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
+ local_shipping:"M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
+ store:"M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z",
+ replay:"M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z",
+ check:"M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+ eco:"M6.05 8.05a7.007 7.007 0 0 0 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.88-7.32-2.63 1.36-4.84 3.42-6.38 5.94a5.003 5.003 0 0 1 .44-6.43C9.81 7.08 14.2 6.4 17.95 6.05c-.35 3.75-1.03 8.14-3.41 10.49z"
+};
+const icon=n=>`<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="${ICONS[n]||''}"/></svg>`;
+const paintIcons=(root=document)=>root.querySelectorAll('.mi[data-i]').forEach(e=>{if(!e.firstChild)e.innerHTML=icon(e.dataset.i)});
+
+/* ---------------- STATE ---------------- */
+const store={get(k,d){try{return JSON.parse(sessionStorage.getItem(KEY+'_'+k))??d}catch(e){return d}},set(k,v){try{sessionStorage.setItem(KEY+'_'+k,JSON.stringify(v))}catch(e){}}};
+let basket=store.get('bt_basket',{});         // {id: qty}
+let log=store.get('bt_log',[]);                // session events for the researcher
+let started=store.get('bt_start',Date.now()); store.set('bt_start',started);
+function track(ev,data={}){log.push({t:Date.now()-started,ev,...data,route:location.hash||'#/'});store.set('bt_log',log)}
+function save(){store.set('bt_basket',basket);updateCart()}
+function setQty(id,q,source){const before=basket[id]||0;q=Math.max(0,q);if(q===0)delete basket[id];else basket[id]=q;save();track(q>before?'add':'remove',{id,name:BY_ID[id].name,qty:q,source,sustainableProduct:BY_ID[id].eco})}
+const count=()=>Object.values(basket).reduce((a,b)=>a+b,0);
+const total=()=>Object.entries(basket).reduce((s,[id,q])=>s+BY_ID[id].price*q,0);
+
+/* ---------------- HELPERS ---------------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const big=v=>Number.isInteger(v)?v+",-":v.toFixed(2).replace('.',',');
+const kr=v=>v.toFixed(2).replace('.',',')+" kr.";
+const meta=p=>(p.brand?`<span class="brand">${esc(p.brand)}</span> | `:"")+`${esc(p.qty)} | ${esc(p.unit)}`+(p.was?` | <span class="was">before ${p.was.toFixed(2)}</span>`:"");
+const priceCls=p=>"price"+(Number.isInteger(p.price)?"":" dec")+(p.was?" sale":"");
+const cat=s=>CATS.find(c=>c.slug===s);
+function go(h){location.hash=h}
+function flash(txt){const a=document.getElementById('added');document.getElementById('addedtxt').textContent=txt;a.classList.add('show');clearTimeout(flash.t);flash.t=setTimeout(()=>a.classList.remove('show'),1800)}
+function updateCart(){const n=count(),b=document.getElementById('badge');b.textContent=n;b.style.display=n?'block':'none';document.getElementById('cartlabel').innerHTML=n?`Basket`:'Basket';
+  document.querySelectorAll('.add[data-id]').forEach(btn=>{const q=basket[btn.dataset.id]||0;btn.classList.toggle('on',q>0);btn.querySelector('.q').style.display=q?'block':'none';btn.querySelector('.q').textContent=q})}
+
+function card(p){return `<article class="card" data-go="#/p/${p.id}">
+  <div class="img"><img loading="lazy" src="${IMG(p.img)}" alt=""></div>
+  <h2>${esc(p.name)}</h2>
+  <div class="spec">${p.brand?esc(p.brand)+' · ':''}${esc(p.qty)}</div>
+  <div class="prow"><span class="ship">${p.was?`<span class="was">Before ${p.was.toFixed(2).replace('.',',')}</span>`:'Plus delivery if applicable'}</span><span class="fprice${p.was?' sale':''}">${big(p.price)}</span></div>
+  <div class="unit">${esc(p.unit.replace('/',' / '))}</div>
+  <div class="addrow"><button class="add" data-id="${p.id}" aria-label="Add to basket"><span class="mi" data-i="add_shopping_cart"></span><span class="q" style="display:none">0</span></button></div>
+</article>`}
+function crumbs(items){return '';return `<div class="crumbs">`+items.map((it,i)=>i<items.length-1?`<a href="${it[1]||'#/'}">${esc(it[0])}</a><span class="mi sep" data-i="chevron_right"></span>`:`<span class="cur">${esc(it[0])}</span>`).join('')+`</div>`}
+function descHTML(t){return t.split('\n\n').map(block=>{const lines=block.split('\n');if(lines.every(l=>l.startsWith('- ')))return '<ul>'+lines.map(l=>`<li>${esc(l.slice(2))}</li>`).join('')+'</ul>';return '<p>'+lines.map(esc).join('<br>')+'</p>'}).join('')}
+
+/* ---------------- VIEWS ---------------- */
+function viewCategory(slug){
+  const c=cat(slug)||CATS[0]; const items=PRODUCTS.filter(p=>p.cat===c.slug);
+  return crumbs([["Home"],...c.path.map(x=>[x,`#/c/${c.slug}`]),[c.name]]).replace(/<a href="[^"]*">(Home &amp; kitchen|Kitchen utensils|Kitchen containers|Lunch &amp; on the go|Drinking bottles|Lunch boxes|Travel mugs)<\/a>/g,'<a>$1</a>')+
+  `<main class="page"><h1 class="ph">${esc(c.name)}</h1><div class="count">${items.length} items</div><div class="grid">${items.map(card).join('')}</div></main>`;
+}
+function viewHome(){
+  return `<main class="page home">
+    <section class="hero"><div><h1>Everything for everyday life</h1><p>Kitchen, home and lunch essentials – delivered to your door or ready for Click &amp; Collect.</p></div><svg class="heroimg" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grocery bag with fresh bread, vegetables and fruit">  <defs>    <linearGradient id="bag" x1="0" x2="1"><stop offset="0" stop-color="#d9b58a"/><stop offset="1" stop-color="#c79c6c"/></linearGradient>    <linearGradient id="bagside" x1="0" x2="1"><stop offset="0" stop-color="#b98c5c"/><stop offset="1" stop-color="#a87a4b"/></linearGradient>    <linearGradient id="bread" x1="0" x2="1"><stop offset="0" stop-color="#e7b56a"/><stop offset="1" stop-color="#c98a3e"/></linearGradient>    <radialGradient id="apple" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ff6b5a"/><stop offset="1" stop-color="#c62828"/></radialGradient>    <radialGradient id="apple2" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#b8e06a"/><stop offset="1" stop-color="#6aa22c"/></radialGradient>    <radialGradient id="orange" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#ffc35a"/><stop offset="1" stop-color="#f08a12"/></radialGradient>  </defs>  <!-- counter shadow -->  <ellipse cx="270" cy="282" rx="230" ry="14" fill="#000" opacity=".18"/>  <!-- baguettes -->  <g transform="rotate(-18 220 120)">    <rect x="190" y="20" width="30" height="190" rx="15" fill="url(#bread)"/>    <path d="M197 50l16-8M197 80l16-8M197 110l16-8M197 140l16-8" stroke="#f6d9a6" stroke-width="3" stroke-linecap="round"/>  </g>  <!-- leafy greens -->  <g fill="#3f9b3a">    <path d="M300 120c-10-50 10-90 30-100 4 30-6 70-30 100z"/>    <path d="M308 122c10-46 40-70 66-70-10 30-34 60-66 70z" fill="#56b84a"/>    <path d="M296 124c-24-36-24-74-10-96 14 26 18 60 10 96z" fill="#2f8a2e"/>  </g>  <!-- carrots -->  <g transform="rotate(14 360 120)">    <path d="M352 70l14 0-7 120z" fill="#f07b18"/>    <path d="M354 70c-6-16 0-26 5-30 2 10 0 22-5 30zM364 70c6-14 14-18 20-18-4 10-12 16-20 18z" fill="#4caf50"/>  </g>  <!-- bag -->  <path d="M150 130h230l-14 150H164z" fill="url(#bag)"/>  <path d="M380 130l26 18-12 132h-28z" fill="url(#bagside)"/>  <path d="M150 130h230l26 18H176z" fill="#e9caa3"/>  <path d="M164 180h204" stroke="#b98c5c" stroke-width="2" opacity=".5"/>  <!-- fruit in front -->  <circle cx="110" cy="252" r="30" fill="url(#apple)"/>  <path d="M110 222c0-8 3-14 8-16" stroke="#6d4c2f" stroke-width="3" fill="none" stroke-linecap="round"/>  <path d="M114 214c8-6 16-6 20-2-6 6-14 6-20 2z" fill="#4caf50"/>  <circle cx="58" cy="262" r="22" fill="url(#orange)"/>  <circle cx="440" cy="256" r="26" fill="url(#apple2)"/>  <path d="M440 230c0-7 2-12 6-14" stroke="#6d4c2f" stroke-width="3" fill="none" stroke-linecap="round"/>  <!-- banana -->  <path d="M462 280c30-8 50-34 52-62 4 2 6 8 4 14-6 30-30 52-62 54z" fill="#ffd54a"/>  <path d="M514 218l4-6" stroke="#6d4c2f" stroke-width="3" stroke-linecap="round"/></svg></section>
+    <section class="usps">
+      <div><span class="mi" data-i="local_shipping"></span><b>Free delivery</b><span>on orders over 499 kr.</span></div>
+      <div><span class="mi" data-i="store"></span><b>Click &amp; Collect</b><span>ready in 2 hours</span></div>
+      <div><span class="mi" data-i="replay"></span><b>Free returns</b><span>within 30 days</span></div>
+    </section>
+  </main>`;
+}
+function viewProduct(id){
+  const p=BY_ID[id]; if(!p) return viewCategory(CATS[0].slug);
+  const c=cat(p.cat); const alts=PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,4);
+  const q=basket[p.id]||0;
+  return crumbs([["Home","#/"],[c.name,`#/c/${c.slug}`],[p.name]])+
+  `<main class="page"><div class="pdp">
+    <div class="gal"><img src="${IMG(p.img,900)}" alt="${esc(p.name)}"></div>
+    <div class="buybox">
+      <div class="brandname">${esc(p.brand||'Groceries ToGo')}</div>
+      <h1>${esc(p.name)}</h1>
+      <div class="spec">${esc(p.qty)}</div>
+      <div class="pricerow">
+        <div><div class="unitline"><b>${esc(p.qty)}</b> | ${esc(p.unit.replace('/',' / '))}${p.was?` | <span class="was">Before ${p.was.toFixed(2).replace('.',',')}</span>`:''}</div>
+        <div class="stepper"><button data-step="-1" aria-label="Decrease">−</button><span id="pq">1</span><button data-step="1" aria-label="Increase">+</button></div></div>
+        <div class="bigprice${p.was?' sale':''}">${big(p.price)}</div>
+      </div>
+      <div class="dtabs"><div class="on"><b>DELIVERY</b><span>Get the product delivered</span></div><div><b>CLICK&amp;COLLECT</b><span>Collect after 2 hours</span></div></div>
+      <div class="stockbox">
+        <div class="stock"><i></i>In stock online (5+)</div>
+        <button class="buy" id="buy">Add to basket</button>
+        <div class="inbasket" id="inb">${q?`${q} in your basket · <a href="#/basket">Go to basket</a>`:''}</div>
+        <a class="dl">See delivery options and prices</a>
+      </div>
+      <div class="acc2">
+        <details open><summary>Description<span class="mi" data-i="expand_more"></span></summary><div class="body"><p><b>${esc(p.lead)}</b></p>${descHTML(p.desc)}</div></details>
+        <details><summary>Product details<span class="mi" data-i="expand_more"></span></summary><div class="body"><table>
+          <tr><td>Brand</td><td>${esc(p.brand||'–')}</td></tr><tr><td>Category</td><td>${esc(c.name)}</td></tr><tr><td>Quantity</td><td>${esc(p.qty)}</td></tr><tr><td>Unit price</td><td>${esc(p.unit)}</td></tr></table></div></details>
+        <details><summary>Specifications<span class="mi" data-i="expand_more"></span></summary><div class="body"><p>See the description for size and care information.</p></div></details>
+        <details><summary>Manufacturer and importer information<span class="mi" data-i="expand_more"></span></summary><div class="body"><p>${esc(p.brand||'Not specified')}</p></div></details>
+      </div>
+    </div>
+  </div>
+  </main>`;
+}
+function viewBasket(){
+  const ids=Object.keys(basket);
+  const head=crumbs([["Home","#/"],["Basket"]]);
+  if(!ids.length) return head+`<main class="page"><div class="co" style="grid-template-columns:1fr"><div><h1>Your basket</h1><div class="empty">Your basket is empty.<br><button class="buy" onclick="go('#/')">CONTINUE SHOPPING</button></div></div></div></main>`;
+  const n=count(), t=total();
+  return head+`<main class="page"><div class="co">
+    <div><h1>Your basket (${n} ${n===1?'item':'items'})</h1><div class="lines">${ids.map(id=>{const p=BY_ID[id],q=basket[id];return `
+      <div class="line">
+        <img src="${IMG(p.img,200)}" alt="" data-go="#/p/${p.id}">
+        <div><div class="nm" data-go="#/p/${p.id}">${esc(p.name)}</div><div class="meta">${meta(p)}</div><button class="rm" data-rm="${p.id}">Remove</button></div>
+        <div class="stepper"><button data-line="${p.id}" data-d="-1" aria-label="Decrease">−</button><span>${q}</span><button data-line="${p.id}" data-d="1" aria-label="Increase">+</button></div>
+        <div class="lt">${kr(p.price*q)}</div>
+      </div>`}).join('')}</div>
+      <a class="back" href="#/"><span class="mi" data-i="chevron_left"></span>Continue shopping</a>
+    </div>
+    <aside class="summary">
+      <h2>Order summary</h2>
+      <div class="row"><span>Items (${n})</span><span>${kr(t)}</span></div>
+      <div class="row"><span>Delivery</span><span>0,00 kr.</span></div>
+      <div class="row total"><span>Total</span><span>${kr(t)}</span></div>
+      <div class="note">Incl. VAT ${kr(t*0.2)}</div>
+      <button class="buy" id="paybtn">PAY ${kr(t)}</button>
+    </aside>
+  </div></main>`;
+}
+function viewDone(){
+  const orders=store.get('bt_orders',[]); const order=orders[orders.length-1];
+  if(!order) return viewBasket();
+  return `<main class="page"><div class="done">
+    <div class="tick"><span class="mi" data-i="check"></span></div>
+    <h1>Thank you for your order</h1>
+    <p>Order number <b>${order.no}</b>. You will receive a confirmation by email shortly.</p>
+    <table>${order.lines.map(l=>`<tr><td>${l.qty} × ${esc(l.name)}</td><td>${kr(l.qty*l.price)}</td></tr>`).join('')}
+      <tr><td><b>Total</b></td><td>${kr(order.total)}</td></tr></table>
+    <button class="buy cont" id="continue">Continue shopping</button>
+  </div></main>`;
+}
+
+/* ---------------- SEARCH: product keywords ---------------- */
+// Extra keywords per product (only attributes that are true for the product)
+const TAGS={"w1": "water bottle bottle drinking bottle drink flask sports reusable fitness gym sport leak-proof", "w2": "water bottle bottle drinking bottle drink flask sports reusable sport cycling bpa-free phthalate-free", "w3": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal gym work", "w4": "water bottle bottle drinking bottle drink flask sports reusable straw work school plastic", "w5": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w6": "water bottle bottle drinking bottle drink flask sports reusable kids children small", "w7": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo thermos leak-proof work school", "w8": "water bottle bottle drinking bottle drink flask sports reusable 1 litre litre large plastic sport school work", "w9": "water bottle bottle drinking bottle drink flask sports reusable kids school straw tritan phthalate-free dishwasher", "w10": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal work", "w11": "water bottle bottle drinking bottle drink flask sports reusable plastic gym fitness", "w12": "water bottle bottle drinking bottle drink flask sports reusable kids children school straw", "w13": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w14": "water bottle bottle drinking bottle drink flask sports reusable thermo thermos insulated stainless steel steel metal work", "w15": "water bottle bottle drinking bottle drink flask sports reusable straw school work plastic large", "w16": "water bottle bottle drinking bottle drink flask sports reusable plastic work", "w17": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school straw", "w18": "water bottle bottle drinking bottle drink flask sports reusable kids children school", "w19": "water bottle bottle drinking bottle drink flask sports reusable cycling bike sport", "w20": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal kids children school", "w21": "water bottle bottle drinking bottle drink flask sports reusable plastic work handle", "w22": "water bottle bottle drinking bottle drink flask sports reusable stainless steel steel metal insulated thermo work school", "w23": "water bottle bottle drinking bottle drink flask sports reusable kids children leak-proof", "l1": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults", "l2": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l3": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal plastic-free compartments dishwasher adults", "l4": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge leftovers plastic", "l5": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments phthalate-free dishwasher", "l6": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments leak-proof dishwasher", "l7": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults leftovers", "l8": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments large adults picnic dishwasher", "l9": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments plastic adults", "l10": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "l11": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments leak-proof phthalate-free salad adults", "l12": "lunch box lunchbox lunch bento packed lunch work school box reusable stainless steel steel metal compartments adults", "l13": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults", "l14": "lunch box lunchbox lunch bento packed lunch work school box reusable tupperware fridge small plastic", "l15": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l16": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments", "l17": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments phthalate-free dishwasher adults", "l18": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children compartments dishwasher", "l19": "lunch box lunchbox lunch bento packed lunch work school box reusable kids teenagers large", "l20": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments christmas large", "l21": "lunch box lunchbox lunch bento packed lunch work school box reusable compartments adults work", "l22": "lunch box lunchbox lunch bento packed lunch work school box reusable kids children", "f1": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack plastic", "f2": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f3": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f4": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable leak-proof set pack plastic small", "f5": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack small stackable microwave dishwasher phthalate-free", "f6": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher", "f7": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight plastic", "f8": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack large plastic", "f9": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f10": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable microwave plastic", "f11": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f12": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free", "f13": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable set pack airtight leak-proof microwave dishwasher recyclable", "f14": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large", "f15": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stackable microwave dishwasher phthalate-free lunch", "f16": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable stainless steel steel metal plastic-free", "f17": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight large plastic", "f18": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable plastic dry goods", "f19": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass plastic-free small", "f20": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable small set pack phthalate-free", "f21": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable glass jar airtight plastic-free", "f22": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable airtight leak-proof recyclable microwave dishwasher small"};
+const CATWORDS_RAW={"water-bottles": "water bottle bottle drinking bottle drink flask sports reusable", "lunch-boxes": "lunch box lunchbox lunch bento packed lunch work school box reusable", "food-containers": "food container containers food storage storage box leftover leftovers fridge freezer meal prep tupperware lid reusable"};
+const STOP=new Set(["a","an","and","the","for","with","of","to","in","set"]);
+const norm=t=>t.toLowerCase().replace(/[^a-z0-9æøå\- ]+/g," ").replace(/\s+/g," ").trim();
+const stem=w=>w.length>4&&w.endsWith("es")&&!w.endsWith("ses")?w.slice(0,-2):w.length>3&&w.endsWith("s")&&!w.endsWith("ss")?w.slice(0,-1):w;
+const tokens=t=>norm(t).split(" ").filter(w=>w&&!STOP.has(w)).map(stem);
+const INDEX=PRODUCTS.map(p=>({p,name:" "+tokens(p.name+" "+p.brand).join(" ")+" ",tags:" "+tokens(TAGS[p.id]||"").join(" ")+" ",desc:" "+tokens(p.lead+" "+p.desc).join(" ")+" "}));
+const MIN_RESULTS=10, MAX_RESULTS=20;
+// Words that describe the product TYPE count the same for every product of that type,
+// so a plain search ("food container") keeps the neutral catalogue order and only
+// feature words (steel, glass, kids …) change the ranking.
+const CATWORDS=Object.fromEntries(Object.entries(CATWORDS_RAW).map(([c,w])=>[c,new Set(tokens(w))]));
+function searchProducts(q){
+  const qt=tokens(q); if(!qt.length) return [];
+  // which product type is the search about? (words shared by all types, e.g. "reusable", don't count)
+  const shared=t=>Object.values(CATWORDS).every(s=>s.has(t));
+  const votes={}; for(const [c,set] of Object.entries(CATWORDS)) votes[c]=qt.filter(t=>set.has(t)&&!shared(t)).length;
+  const top=Math.max(...Object.values(votes)); const cats=Object.keys(votes).filter(c=>votes[c]===top&&top>0);
+  const typeFilter=cats.length===1?cats[0]:null;
+  const scored=INDEX.map((x,i)=>{let s=0,hit=0;const cw=CATWORDS[x.p.cat];
+    for(const t of qt){const k=" "+t;let w=0;
+      if(cw.has(t))w=2;else if(x.name.includes(k))w=3;else if(x.tags.includes(k))w=2;else if(x.desc.includes(k))w=1;
+      s+=w;if(w)hit++}
+    return {p:x.p,s,hit,i}}).filter(x=>x.s>0&&(!typeFilter||x.p.cat===typeFilter));
+  if(!scored.length) return [];
+  const best=Math.max(...scored.map(x=>x.s));
+  let res=scored.filter(x=>x.s>=best*0.5).sort((a,b)=>b.s-a.s||a.i-b.i).map(x=>x.p);
+  if(res.length<MIN_RESULTS){
+    const vote={}; scored.forEach(x=>vote[x.p.cat]=(vote[x.p.cat]||0)+x.s);
+    const cat=typeFilter||Object.keys(vote).sort((a,b)=>vote[b]-vote[a])[0];
+    const extra=[...scored.filter(x=>!res.includes(x.p)).sort((a,b)=>b.s-a.s||a.i-b.i).map(x=>x.p),...PRODUCTS.filter(p=>p.cat===cat)];
+    for(const p of extra){if(res.length>=MIN_RESULTS)break;if(!res.includes(p))res.push(p)}
+  }
+  return res.slice(0,MAX_RESULTS);
+}
+
+/* ---------------- QAC: suggestion lists & experimental settings ---------------- */
+// One line per search term. "*" marks a sustainable suggestion. Editable in the researcher panel.
+const DEFAULT_SUGG=`water bottle, bottle, drinking bottle, drink bottle, water, drink, flask, sports bottle, thermos: water bottle | *water bottle stainless steel | water bottle kids | *water bottle reusable | water bottle with straw | *water bottle bpa-free | water bottle 1 litre | water bottle sport | water bottle for school | *water bottle insulated steel | water bottle leak-proof | drinking bottle
+lunch box, lunchbox, lunch, bento, packed lunch, lunch container: lunch box | *lunch box stainless steel | lunch box kids | *lunch box plastic-free | lunch box with compartments | *lunch box reusable | lunch box for work | lunch box for school | lunch box large | *lunch box phthalate-free | lunch box leak-proof | bento lunch box
+food container, food containers, container, containers, food storage, storage, leftovers, leftover, freezer, fridge, tupperware, meal prep, food box, box: food container | *food container glass | food container with lid | *food container stainless steel | food container for freezer | *food container recyclable | food container for leftovers | food storage containers | food container set | *food container plastic-free | food container microwave | meal prep containers`;
+const settings=Object.assign({cond:"eco-top",badge:false,highlight:false,max:6,pid:"",sugg:DEFAULT_SUGG},(()=>{try{return JSON.parse(localStorage.getItem("gtg_settings_"+KEY))||{}}catch(e){return {}}})());
+(()=>{const u=new URLSearchParams(location.search);
+  if(u.get("cond"))settings.cond=u.get("cond"); if(u.get("pid"))settings.pid=u.get("pid");
+  if(u.has("badge"))settings.badge=u.get("badge")==="1"; if(u.get("max"))settings.max=+u.get("max");})();
+if(LOCK) Object.assign(settings,{cond:LOCK.cond,highlight:LOCK.highlight,badge:false,max:6,ecoPos:LOCK.ecoPos||null});
+function saveSettings(){try{localStorage.setItem("gtg_settings_"+KEY,JSON.stringify(settings))}catch(e){}}
+function parseSugg(txt){
+  return txt.split("\n").map(l=>l.trim()).filter(l=>l&&l.includes(":")).map((l,li)=>{
+    const i=l.indexOf(":"); const seeds=l.slice(0,i).split(",").map(x=>norm(x)).filter(Boolean); const seed=seeds[0];
+    const items=l.slice(i+1).split("|").map(x=>x.trim()).filter(Boolean).map((x,j)=>({text:x.replace(/^\*/,"").trim(),eco:x.startsWith("*"),listPos:j+1}));
+    return {seed,seeds,items,li};
+  });
+}
+let SUGG=parseSugg(settings.sugg);
+function wordsPrefixMatch(text,input){
+  const tw=norm(text).split(" "), iw=norm(input).split(" ").filter(Boolean); if(!iw.length) return false;
+  // every typed word must match the start of a word in the suggestion (last word may be partial)
+  return iw.every((w,k)=>tw.some(x=>k===iw.length-1?x.startsWith(w):(x===w||stem(x)===stem(w)||x.startsWith(w))));
+}
+function getSuggestions(input){
+  const q=norm(input); if(!q) return [];
+  // 1. which suggestion lists fit what was typed (best fit first)
+  const fit=set=>set.seeds.some(s=>s.startsWith(q)||q.startsWith(s+" ")||q===s)?0
+               :set.seeds.some(s=>wordsPrefixMatch(s,q))?1
+               :set.items.some(it=>wordsPrefixMatch(it.text,q))?2:9;
+  const starts=set=>set.items.some(it=>norm(it.text).startsWith(q))?0:1;
+  const sets=SUGG.map(set=>({set,f:fit(set),st:starts(set)})).filter(x=>x.f<9).sort((a,b)=>a.f-b.f||a.st-b.st||a.set.li-b.set.li);
+  if(!sets.length) return [];
+  const usable=it=>!(settings.cond==="control"&&it.eco);
+  let out=[];
+  // 2b. suggestions where a word starts with what was typed, in the order written in the list
+  for(const {set} of sets) for(const it of set.items) if(usable(it)&&wordsPrefixMatch(it.text,q)) out.push({...it,set:set.seed,li:set.li});
+  // 3. topped up with the rest of the best-fitting list, so there are always enough suggestions
+  for(const {set} of sets) for(const it of set.items) if(usable(it)) out.push({...it,set:set.seed,li:set.li});
+  const seen=new Set(); out=out.filter(x=>{const k=norm(x.text);if(seen.has(k))return false;seen.add(k);return true});
+  // 4. always exactly N suggestions; the same N in every condition (control: sustainable ones removed first)
+  out=out.slice(0,settings.max);
+  // 5. experimental manipulation of the ranking (stable sort keeps the written order inside each group)
+  if(settings.cond==="eco-top") out.sort((a,b)=>(b.eco-a.eco));
+  if(settings.cond==="eco-bottom") out.sort((a,b)=>(a.eco-b.eco));
+  // fixed positions for the sustainable suggestions, e.g. [2,5,6]; both groups keep their written order
+  if(settings.ecoPos){const eco=out.filter(x=>x.eco),reg=out.filter(x=>!x.eco),pos=settings.ecoPos.slice(0,eco.length),res=[];
+    for(let p=1;p<=out.length;p++)res.push(pos.includes(p)?eco.shift():reg.shift());out=res.filter(Boolean)}
+  return out.map((x,i)=>({...x,pos:i+1}));
+}
+function hl(text,input){
+  // Google-style: what the participant typed is plain, the predicted completion is bold
+  const t=esc(text), q=norm(input);
+  // what the participant typed stays regular; everything the suggestion adds is bold
+  const typed=input.trim(); if(!typed) return "<b>"+t+"</b>";
+  const i=text.toLowerCase().search(new RegExp("(^|\\s)"+typed.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
+  if(i<0) return "<b>"+t+"</b>";
+  const st=i===0&&text.toLowerCase().startsWith(typed.toLowerCase())?0:i+1;
+  const pre=text.slice(0,st), mid=text.slice(st,st+typed.length), post=text.slice(st+typed.length);
+  return (pre?"<b>"+esc(pre)+"</b>":"")+esc(mid)+(post?"<b>"+esc(post)+"</b>":"");
+}
+
+/* ---------------- QAC: UI ---------------- */
+const qEl=document.getElementById("q"), qacEl=document.getElementById("qac"), formEl=document.getElementById("searchform");
+let cur=[], act=-1, typedAt=0, lastShownKey="";
+function drawQac(){
+  const val=qEl.value; formEl.classList.toggle("has-text",!!val);
+  cur=getSuggestions(val); act=-1;
+  if(!cur.length||document.activeElement!==qEl){qacEl.classList.remove("open");qacEl.innerHTML="";return}
+  qacEl.innerHTML=cur.map((s,i)=>`<li role="option" data-i="${i}"${settings.highlight&&s.eco?' class="eco-hl"':''}><span class="mi" data-i="search"></span><span>${hl(s.text,val)}</span>${settings.badge&&s.eco?'<span class="mi leaf" data-i="eco" title="Sustainable choice"></span>':''}</li>`).join("");
+  paintIcons(qacEl); qacEl.classList.add("open");
+  const key=val+"|"+cur.map(s=>s.text).join("|");
+  if(key!==lastShownKey){lastShownKey=key;track("qac_shown",{input:val,suggestions:cur.map(s=>({pos:s.pos,text:s.text,eco:s.eco}))})}
+}
+function setAct(i){act=i;[...qacEl.children].forEach((li,k)=>li.classList.toggle("act",k===i));if(i>=0)qEl.value=cur[i].text}
+let typedValue="";
+qEl.addEventListener("input",()=>{if(!typedAt)typedAt=Date.now();typedValue=qEl.value;track("keystroke",{input:qEl.value});drawQac()});
+qEl.addEventListener("focus",()=>{track("search_focus");drawQac()});
+qEl.addEventListener("blur",()=>setTimeout(()=>qacEl.classList.remove("open"),150));
+// Enter and the arrow keys do nothing: a search can only be made by clicking a suggestion
+qEl.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){e.preventDefault();track("enter_blocked",{input:qEl.value});return}
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();return}
+  if(e.key==="Escape"){qacEl.classList.remove("open")}
+});
+qacEl.addEventListener("mousedown",e=>{const li=e.target.closest("li");if(li){e.preventDefault();pick(cur[+li.dataset.i],"mouse")}});
+function pick(s,how){
+  track("qac_select",{typed:typedValue,text:s.text,pos:s.pos,eco:s.eco,shown:cur.length,method:how,msSinceFirstKey:typedAt?Date.now()-typedAt:null});
+  qEl.value=s.text; submitSearch(s.text,"suggestion",s);
+}
+formEl.addEventListener("submit",e=>{e.preventDefault();track("submit_blocked",{input:qEl.value});qEl.focus();drawQac()});
+document.getElementById("qclear").addEventListener("click",()=>{qEl.value="";typedValue="";track("search_clear");qEl.focus();drawQac()});
+function submitSearch(v,source,s){
+  track("search_submit",{query:v,source,typed:typedValue,eco:s?s.eco:null,pos:s?s.pos:null});
+  qacEl.classList.remove("open");qEl.blur();typedAt=0;
+  go("#/s/"+encodeURIComponent(v));
+}
+function viewSearch(q){
+  const res=searchProducts(q);
+  track("search_results",{query:q,count:res.length,ids:res.map(p=>p.id)});
+  const head=crumbs([["Home","#/"],[`Search for “${q}”`]]);
+  if(!res.length) return head+`<main class="page"><h1 class="ph">Search results for ${esc(q)}</h1><div class="count">0 items</div><div class="noresults">We couldn't find any products matching <b>“${esc(q)}”</b>. Try another search, or browse the categories above.</div></main>`;
+  return head+`<main class="page"><h1 class="ph">Search results for ${esc(q)}</h1><div class="count">${res.length} ${res.length===1?"item":"items"}</div><div class="grid">${res.map((p,i)=>card(p).replace('<article class="card"',`<article class="card" data-rank="${i+1}" data-q="${esc(q)}"`)).join("")}</div></main>`;
+}
+
+/* ---------------- RESEARCHER PANEL ---------------- */
+const $=id=>document.getElementById(id);
+function openRP(){$("rp-pid").value=settings.pid;$("rp-cond").value=settings.cond;$("rp-badge").checked=settings.badge;$("rp-hl").checked=settings.highlight;
+  if(LOCK){["rp-cond","rp-badge","rp-hl"].forEach(i=>$(i).disabled=true);$("rp-lock").innerHTML=`<b>This is test site ${LOCK.site}: ${LOCK.label}.</b> The condition is fixed for this site.`}$("rp-max").value=settings.max;$("rp-sugg").value=settings.sugg;$("rp-status").textContent=`Site ${KEY} · ${settings.pid||"(no ID)"} · ${settings.cond}${settings.highlight?" · green highlight":""}${settings.badge?" · leaf icon":""} · ${log.length} events logged this session`;document.body.classList.add("rp-open")}
+function closeRP(){document.body.classList.remove("rp-open")}
+document.addEventListener("keydown",e=>{if(e.ctrlKey&&e.shiftKey&&(e.key==="E"||e.key==="e")){e.preventDefault();document.body.classList.contains("rp-open")?closeRP():openRP()}});
+$("rpclose").onclick=closeRP; $("rpbg").onclick=closeRP;
+$("rp-defaults").onclick=()=>{$("rp-sugg").value=DEFAULT_SUGG};
+$("rp-dl").onclick=()=>downloadSession();
+$("rp-save").onclick=()=>{
+  settings.pid=$("rp-pid").value.trim();settings.cond=$("rp-cond").value;settings.badge=$("rp-badge").checked;settings.highlight=$("rp-hl").checked;if(LOCK)Object.assign(settings,{cond:LOCK.cond,highlight:LOCK.highlight,badge:false});settings.max=Math.max(1,Math.min(10,+$("rp-max").value||8));settings.sugg=$("rp-sugg").value;
+  SUGG=parseSugg(settings.sugg);saveSettings();newSession();closeRP();
+};
+if(new URLSearchParams(location.search).has("admin")) setTimeout(openRP,50);
+
+/* ---------------- ROUTER ---------------- */
+function render(){
+  const h=location.hash||'#/'; let m, html, active=null;
+  if((m=h.match(/^#\/p\/(\w+)/))){html=viewProduct(m[1]);active=BY_ID[m[1]]?.cat;track('view_product',{id:m[1]})}
+  else if((m=h.match(/^#\/s\/(.*)$/))){const q=decodeURIComponent(m[1]);html=viewSearch(q);qEl.value=q;formEl.classList.add('has-text')}
+  else if(h==='#/basket'){html=viewBasket();track('view_basket')}
+  else if(h==='#/done'){html=viewDone()}
+  else {html=viewHome();track('view_home')}
+  if(!h.startsWith('#/s/')){qEl.value='';formEl.classList.remove('has-text')}
+  document.getElementById('added').classList.remove('show');
+  const v=document.getElementById('view'); v.innerHTML=html; paintIcons(v);
+  document.querySelectorAll('nav.cats a').forEach(a=>a.classList.toggle('on',a.dataset.cat===active));
+  document.body.classList.remove('menu-open'); window.scrollTo(0,0); updateCart();
+  let pq=1;
+  v.onclick=e=>{
+    const add=e.target.closest('.add[data-id]');
+    if(add){e.stopPropagation();const id=add.dataset.id;setQty(id,(basket[id]||0)+1,'card');flash(`${BY_ID[id].name} added to basket`);return}
+    const st=e.target.closest('[data-step]');
+    if(st){pq=Math.max(1,pq+ +st.dataset.step);document.getElementById('pq').textContent=pq;return}
+    if(e.target.closest('#buy')){const id=h.match(/^#\/p\/(\w+)/)[1];setQty(id,(basket[id]||0)+pq,'detail');flash(`${pq} × ${BY_ID[id].name} added to basket`);document.getElementById('inb').innerHTML=`${basket[id]} in your basket · <a href="#/basket">Go to basket</a>`;return}
+    const ln=e.target.closest('[data-line]');
+    if(ln){const id=ln.dataset.line;setQty(id,(basket[id]||0)+ +ln.dataset.d,'basket');render();return}
+    const rm=e.target.closest('[data-rm]');
+    if(rm){setQty(rm.dataset.rm,0,'basket');render();return}
+    if(e.target.closest('#paybtn')){
+      const orders=store.get('bt_orders',[]);
+      const order={orderIndex:orders.length+1,no:'GT-'+String(Date.now()).slice(-6),lines:Object.entries(basket).map(([id,qty])=>{const p=BY_ID[id];return {id,qty,name:p.name,cat:p.cat,price:p.price,sustainableProduct:p.eco}}),total:total(),at:new Date().toISOString()};
+      orders.push(order);store.set('bt_orders',orders);track('pay',{orderIndex:order.orderIndex,items:order.lines,total:order.total});basket={};save();go('#/done');return}
+    if(e.target.closest('#continue')){track('continue_shopping');qEl.value='';go('#/');return}
+    if(e.target.closest('#copylog')){const d=sessionData();navigator.clipboard?.writeText(d).then(()=>e.target.textContent='Copied!',()=>prompt('Copy:',d));return}
+    if(e.target.closest('#dllog')){downloadSession();return}
+    if(e.target.closest('#reset')){newSession();return}
+    const g=e.target.closest('[data-go]'); if(g){if(g.dataset.rank)track('result_click',{query:g.dataset.q,rank:+g.dataset.rank,id:g.dataset.go.split('/').pop(),sustainableProduct:BY_ID[g.dataset.go.split('/').pop()].eco});go(g.dataset.go)}
+  };
+}
+function sessionData(){return JSON.stringify({site:KEY,siteLabel:LOCK?LOCK.label:'development',participant:settings.pid,condition:settings.cond,sustainablePositions:settings.ecoPos,highlight:settings.highlight,leafIcon:settings.badge,maxSuggestions:settings.max,suggestionLists:settings.sugg,startedAt:new Date(started).toISOString(),durationMs:Date.now()-started,orders:store.get('bt_orders',[]),events:log},null,2)}
+function downloadSession(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sessionData()],{type:'application/json'}));a.download=`session-site${KEY}-${settings.pid||'noid'}-${settings.cond}${settings.highlight?'-highlight':''}-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;a.click()}
+function newSession(){try{sessionStorage.clear()}catch(_){}basket={};log=[];started=Date.now();store.set('bt_start',started);track('session_start',{site:KEY,participant:settings.pid,condition:settings.cond,highlight:settings.highlight});go('#/');render();updateCart()}
+
+/* ---------------- INIT ---------------- */
+paintIcons();
+if(!log.length) track('session_start',{site:KEY,participant:settings.pid,condition:settings.cond,highlight:settings.highlight});
+window.addEventListener('hashchange',render);
+render();
+</script>
+</body>
+</html>
