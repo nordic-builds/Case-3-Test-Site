@@ -432,10 +432,10 @@ scale (Sudbury-Riley &amp; Kohlbacher, 2016).</p>
 <h2>Final Test pages connected to Clarity</h2>
 To open a shop without a code, add ?admin to the address, for example shop-3.html?admin. This also opens the hidden researcher panel. For a normal pilot run, use TEST1 to TEST4 on the start page instead.
 <ul>
-  <li><a href="groceries-togo-site-A-control.html">Shop 1. A (Control)</a></li>
-  <li><a href="groceries-togo-site-B-mixed.html">Shop 2. B (Mixed)</a></li>
-  <li><a href="groceries-togo-site-C-sustainable-top">Shop 3. C (Sustainable top)</a></li>
-  <li><a href="groceries-togo-site-Db-static-highlight.html">Shop 4. D (Static highlight & hover highlight)</a></li>
+  <li><a href="shop-1.html">Shop 1. A (Control)</a></li>
+  <li><a href="shop-2.html">Shop 2. B (Mixed)</a></li>
+  <li><a href="shop-3.html">Shop 3. C (Sustainable top)</a></li>
+  <li><a href="shop-4.html">Shop 4. D (Static highlight & hover highlight)</a></li>
 </ul>
 
 
