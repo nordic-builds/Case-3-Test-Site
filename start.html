@@ -31,19 +31,19 @@
   .consent input{width:22px;height:22px;margin:3px 0 0;flex:0 0 22px;accent-color:var(--blue)}
   button{font:inherit;font-weight:600;font-size:18px;background:var(--blue);color:#fff;border:0;border-radius:24px;padding:12px 34px;margin-top:22px;cursor:pointer}
   button:hover{filter:brightness(.93)}
+  .tasks{margin-top:22px;padding:16px 20px;background:var(--bg);border-radius:10px}
+  .tasks ol{margin:6px 0 0;padding-left:22px}
+  .tasks li{padding:2px 0}
   .msg{color:var(--err);font-weight:600;margin-top:10px;min-height:1.5em}
-  .warn{display:none;background:#fff4e5;border:1px solid #f0b45a;border-radius:10px;padding:14px 18px;margin-bottom:20px}
 </style>
 </head>
 <body>
 <header><div class="wrap"><span class="badgelogo">groceries<br>togo</span></div></header>
 <main><div class="wrap">
 
-  <div class="warn" id="small">It looks like you are on a phone or a small screen. Please open this link on a laptop or desktop computer instead.</div>
-
   <div class="card">
     <h1>Welcome, and thank you for taking part</h1>
-    <p>In this session you will shop for a few items in an online shop called Groceries ToGo. Your interviewer will tell you over Teams what to look for.</p>
+    <p>In this session you will shop for a few items in an online shop called Groceries ToGo. Your interviewer will guide you over Teams.</p>
     <p>There are no right or wrong answers. We are testing the website, not you. You will not be asked for any payment details, and nothing is actually bought or delivered.</p>
   </div>
 
@@ -64,6 +64,9 @@
       <input type="text" id="code" placeholder="e.g. P07" maxlength="8" spellcheck="false">
       <div class="how">Your interviewer gives you this code.</div>
       <label class="consent"><input type="checkbox" id="ok"><span>I agree that my clicks and movements on this website are recorded for the study. No names or other personal details are collected.</span></label>
+      <div class="tasks"><b>Your tasks</b>
+        <ol><li>Buy a water bottle.</li><li>Buy a lunchbox.</li><li>Buy a food storage container.</li></ol>
+      </div>
       <button type="submit">Start shopping</button>
       <div class="msg" id="msg" role="alert"></div>
     </form>
@@ -80,8 +83,6 @@ function norm(v){
   m=v.match(/^TEST0*([1-4])$/); if(m) return "TEST"+m[1];
   return v;
 }
-if(Math.min(screen.width,innerWidth)<900 || matchMedia("(pointer:coarse)").matches && !matchMedia("(pointer:fine)").matches)
-  document.getElementById("small").style.display="block";
 const $=id=>document.getElementById(id);
 $("f").addEventListener("submit",e=>{
   e.preventDefault();
