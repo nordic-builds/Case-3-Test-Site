@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>/* Start-page gate: without a valid participant code for this shop, go to the start page (researchers: add ?admin) */(function(){var q=new URLSearchParams(location.search),p=(q.get("pid")||"").toUpperCase();if(!q.has("admin")&&["P03", "P08", "P09", "P14", "P20", "P24", "TEST3"].indexOf(p)<0)location.replace("start.html");})();</script>
+<script>/* Start-page gate: without a valid participant code for this shop, go to the start page (researchers: add ?admin) */(function(){var q=new URLSearchParams(location.search),p=(q.get("pid")||"").toUpperCase();if(!q.has("admin")&&["P03", "P08", "P09", "P14", "P20", "P24", "TEST3"].indexOf(p)<0){location.replace("start.html");return}try{var run=q.get("run")||"",ss=sessionStorage,fin=ss.getItem("siteC_bt_finished")==="true";if(run?ss.getItem("gtg_run")!==run:fin){ss.clear();if(run)ss.setItem("gtg_run",run);if(location.hash)history.replaceState(null,"",location.pathname+location.search)}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Order groceries online | Groceries ToGo</title>
@@ -1475,6 +1475,11 @@ const MIN_RESULTS=10, MAX_RESULTS=20;
 // so a plain search ("food container") keeps the neutral catalogue order and only
 // feature words (steel, glass, kids …) change the ranking.
 const CATWORDS=Object.fromEntries(Object.entries(CATWORDS_RAW).map(([c,w])=>[c,new Set(tokens(w))]));
+const TASK_OF={"water-bottles":1,"lunch-boxes":2,"food-containers":3};
+function catOf(text){const qt=tokens(text||"");if(!qt.length)return null;
+  const shared=t=>Object.values(CATWORDS).every(s=>s.has(t));
+  let best=null,top=0,tie=false;for(const [c,set] of Object.entries(CATWORDS)){const v=qt.filter(t=>set.has(t)&&!shared(t)).length;if(v>top){top=v;best=c;tie=false}else if(v&&v===top)tie=true}
+  return top&&!tie?best:null}
 function searchProducts(q){
   const qt=tokens(q); if(!qt.length) return [];
   // which product type is the search about? (words shared by all types, e.g. "reusable", don't count)
@@ -1614,27 +1619,31 @@ function viewSearch(q){
   C("set","condition",LOCK?LOCK.label:"development");
   if(settings.pid){C("set","participant",settings.pid);C("identify",settings.pid)}{const g=new URLSearchParams(location.search).get("g");if(g)C("set","age_group",g)}
   const sus=b=>b?"sustainable":"regular";
-  let lastQuery=null,lastPick="none (typed)";
+  let lastQuery=null,lastPick="none (typed)";const lastQ={},lastP={};
   window.__clarityBridge=(ev,d)=>{
     if(ev==="qac_select"){
       C("event",`qac_click_pos${d.pos}_${sus(d.eco)}`);C("event",`qac_click_${sus(d.eco)}`);
       C("set","suggestions_clicked",`${d.text} (pos ${d.pos}, ${sus(d.eco)})`);
-      lastPick=`pos ${d.pos} ${sus(d.eco)}: ${d.text}`;
+      lastPick=`pos ${d.pos} ${sus(d.eco)}: ${d.text}`;{const k=catOf(d.text);if(k)lastP[k]=lastPick}
     }
-    else if(ev==="search_submit"){lastQuery=d.query;C("set","searches",d.query)}
+    else if(ev==="search_submit"){lastQuery=d.query;C("set","searches",d.query);{const k=catOf(d.query);if(k)lastQ[k]=d.query}}
     else if(ev==="qac_hover"&&d.eco){C("event","qac_hover_sustainable")}
     else if(ev==="result_click"){C("event",`result_click_${sus(d.sustainableProduct)}`)}
     else if(ev==="add"){C("event",`add_to_basket_${sus(d.sustainableProduct)}`)}
     else if(ev==="enter_blocked"){C("event","enter_key_blocked")}
     else if(ev==="session_complete"){C("event","session_complete")}
     else if(ev==="pay"){
-      const n=d.orderIndex, s=d.items.some(l=>l.sustainableProduct);
-      C("event",`purchase_${n}`);C("event",`purchase_${sus(s)}`);C("event",`purchase_${n}_${sus(s)}`);
-      C("set",`order${n}_products`,d.items.map(l=>`${l.qty} x ${l.name}`).join("; "));
-      C("set",`order${n}_sustainable`,s?"yes":"no");
-      C("set",`order${n}_last_search`,lastQuery||"none");
-      C("set",`order${n}_last_suggestion`,lastPick);
-      lastQuery=null;lastPick="none (typed)";
+      const all=d.items||[];
+      C("event","purchase");
+      for(const [cat,n] of Object.entries(TASK_OF)){
+        const items=all.filter(l=>l.cat===cat); if(!items.length){C("set",`task${n}_products`,"none");continue}
+        const s=items.some(l=>l.sustainableProduct);
+        C("event",`purchase_task${n}_${sus(s)}`);
+        C("set",`task${n}_products`,items.map(l=>`${l.qty} x ${l.name}`).join("; "));
+        C("set",`task${n}_sustainable`,s?"yes":"no");
+        C("set",`task${n}_last_search`,lastQ[cat]||"none");
+        C("set",`task${n}_last_suggestion`,lastP[cat]||"none (typed)");
+      }
     }
   };
   // first hover on each suggestion of each drop-down shown (lets you see who noticed sustainable options)
@@ -1658,49 +1667,56 @@ const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkj
   setInterval(flush,3000); window.__flushLog=flush;
   addEventListener("pagehide",flush);
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flush()});
-  // running summary of the current task
-  let T;
-  const resetT=()=>{T={start:Date.now(),searches:[],pick:null,anyEco:0,lists:0,last:[],atPick:null,hoverEco:0,keys:0,enter:0,views:0,rank:{},from:{}}};
+  // running summary per task; a task = one product type (1 water bottle, 2 lunch box, 3 food container)
+  const CATS3=["water-bottles","lunch-boxes","food-containers"];
+  const newT=()=>({start:null,end:null,searches:[],pick:null,anyEco:0,lists:0,last:[],atPick:null,hoverEco:0,keys:0,enter:0,views:0,rank:{},from:{}});
+  let TT,curCat=null,pendingKeys=0;
+  const resetT=()=>{TT=Object.fromEntries(CATS3.map(c=>[c,newT()]));curCat=null;pendingKeys=0};
   resetT();
+  const touch=c=>{const T=TT[c];if(!T)return null;const n=Date.now();if(!T.start)T.start=n;T.end=n;return T};
   window.__sheetBridge=(ev,d)=>{
     buf.push({t:Date.now()-started,ev,route:location.hash||"#/",d});
+    let c,T;
     switch(ev){
-      case "session_start": case "continue_shopping": resetT(); break;
-      case "keystroke": T.keys++; break;
-      case "qac_shown": T.lists++; T.last=d.suggestions||[]; break;
-      case "qac_hover": if(d.eco) T.hoverEco=1; break;
-      case "qac_select": T.pick=d; if(d.eco) T.anyEco=1; T.atPick=T.last; break;
-      case "search_submit": T.searches.push(d.query); break;
-      case "enter_blocked": T.enter++; break;
-      case "view_product": T.views++; break;
-      case "result_click": T.rank[d.id]=d.rank; break;
-      case "add": T.from[d.id]=d.source; if(d.source==="card"&&window.__lastCardRank) T.rank[d.id]=window.__lastCardRank; break;
+      case "session_start": resetT(); break;
+      case "keystroke": c=catOf(d.input); if(c){curCat=c;touch(c).keys+=1+pendingKeys;pendingKeys=0} else if(curCat&&norm(d.input).length>3){touch(curCat).keys++} else pendingKeys++; break;
+      case "qac_shown": c=catOf(((d.suggestions||[])[0]||{}).text); if(!c)break; curCat=c; T=touch(c); T.lists++; T.last=d.suggestions||[]; T.keys+=pendingKeys; pendingKeys=0; break;
+      case "qac_hover": c=catOf(d.text); if(c&&d.eco) touch(c).hoverEco=1; break;
+      case "qac_select": c=catOf(d.text)||curCat; if(!c)break; T=touch(c); T.pick=d; if(d.eco)T.anyEco=1; T.atPick=T.last; break;
+      case "search_submit": c=catOf(d.query)||curCat; if(c) touch(c).searches.push(d.query); break;
+      case "enter_blocked": c=catOf(d.input)||curCat; if(c) touch(c).enter++; break;
+      case "view_product": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(c) touch(c).views++; break;
+      case "result_click": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(c) touch(c).rank[d.id]=d.rank; break;
+      case "add": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(!c)break; T=touch(c); T.from[d.id]=d.source; if(d.source==="card"&&window.__lastCardRank) T.rank[d.id]=window.__lastCardRank; break;
       case "pay": {
-        const items=d.items||[], list=T.atPick||T.last||[], eco=list.filter(s=>s.eco);
-        tasks.push({...meta(),
-          task_number:d.orderIndex,
-          duration_s:Math.round((Date.now()-T.start)/1000),
-          products:items.map(l=>`${l.qty} x ${l.name}`).join("; "),
-          product_ids:items.map(l=>l.id).join(", "),
-          category:[...new Set(items.map(l=>l.cat))].join(", "),
-          sustainable_purchase:items.some(l=>l.sustainableProduct)?1:0,
-          n_items:items.reduce((a,l)=>a+l.qty,0),
-          total_dkk:Math.round(d.total*100)/100,
-          n_searches:T.searches.length,
-          queries:T.searches.join(" | "),
-          suggestion_clicked:T.pick?T.pick.text:"",
-          suggestion_position:T.pick?T.pick.pos:"",
-          suggestion_sustainable:T.pick?(T.pick.eco?1:0):"",
-          any_sustainable_suggestion_clicked:T.anyEco,
-          sustainable_suggestions_shown:eco.length,
-          sustainable_positions_shown:eco.map(s=>s.pos).join(","),
-          hovered_sustainable_suggestion:T.hoverEco,
-          n_suggestion_lists_shown:T.lists,
-          n_keystrokes:T.keys,
-          enter_attempts:T.enter,
-          purchased_from:items.map(l=>T.from[l.id]||"").join(", "),
-          result_rank_of_purchase:items.map(l=>T.rank[l.id]??"").join(", "),
-          n_product_pages_viewed:T.views});
+        const all=d.items||[];
+        for(const cat of CATS3){
+          const T=TT[cat], items=all.filter(l=>l.cat===cat), list=T.atPick||T.last||[], eco=list.filter(s=>s.eco);
+          tasks.push({...meta(),
+            task_number:TASK_OF[cat],
+            duration_s:T.start?Math.round((T.end-T.start)/1000):"",
+            products:items.map(l=>`${l.qty} x ${l.name}`).join("; "),
+            product_ids:items.map(l=>l.id).join(", "),
+            category:cat,
+            sustainable_purchase:items.length?(items.some(l=>l.sustainableProduct)?1:0):"",
+            n_items:items.reduce((a,l)=>a+l.qty,0),
+            total_dkk:Math.round(items.reduce((a,l)=>a+l.qty*l.price,0)*100)/100,
+            n_searches:T.searches.length,
+            queries:T.searches.join(" | "),
+            suggestion_clicked:T.pick?T.pick.text:"",
+            suggestion_position:T.pick?T.pick.pos:"",
+            suggestion_sustainable:T.pick?(T.pick.eco?1:0):"",
+            any_sustainable_suggestion_clicked:T.anyEco,
+            sustainable_suggestions_shown:eco.length,
+            sustainable_positions_shown:eco.map(s=>s.pos).join(","),
+            hovered_sustainable_suggestion:T.hoverEco,
+            n_suggestion_lists_shown:T.lists,
+            n_keystrokes:T.keys,
+            enter_attempts:T.enter,
+            purchased_from:items.map(l=>T.from[l.id]||"").join(", "),
+            result_rank_of_purchase:items.map(l=>T.rank[l.id]??"").join(", "),
+            n_product_pages_viewed:T.views});
+        }
         flush(); resetT(); break;
       }
     }
@@ -1723,7 +1739,7 @@ $("rp-save").onclick=()=>{
 if(new URLSearchParams(location.search).has("admin")) setTimeout(openRP,50);
 
 /* ---------------- END OF TEST ---------------- */
-const TASKS_PER_SESSION=3;
+const TASKS_PER_SESSION=1;
 function confetti(ms){
   const c=document.createElement('canvas'),x=c.getContext('2d'),W=c.width=innerWidth,H=c.height=innerHeight;
   c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9999';document.body.appendChild(c);

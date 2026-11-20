@@ -34,6 +34,8 @@
   .tasks{margin-top:22px;padding:16px 20px;background:var(--bg);border-radius:10px}
   .tasks ol{margin:6px 0 0;padding-left:22px}
   .tasks li{padding:2px 0}
+  ol.items{margin:0 0 12px;padding-left:24px}
+  ol.items li{padding:1px 0}
   .msg{color:var(--err);font-weight:600;margin-top:10px;min-height:1.5em}
 </style>
 </head>
@@ -43,18 +45,16 @@
 
   <div class="card">
     <h1>Welcome, and thank you for taking part</h1>
-    <p>In this session you will shop for a few items in an online shop called Groceries ToGo. Your interviewer will guide you over Teams.</p>
-    <p>There are no right or wrong answers. We are testing the website, not you. You will not be asked for any payment details, and nothing is actually bought or delivered.</p>
+    <p>In this session you will shop for and buy 3 items in an online shop called Groceries ToGo:</p>
+    <ol class="items"><li>Buy a water bottle.</li><li>Buy a lunchbox.</li><li>Buy a food storage container.</li></ol>
+    <p>Your interviewer will guide you over Teams.</p>
   </div>
 
   <div class="card">
     <h2>Before you start</h2>
-    <ul class="check">
-      <li><span class="num">1</span><div><b>Use a laptop or desktop computer</b>, not a phone or tablet. Chrome, Edge, Firefox or Safari all work.</div></li>
-      <li><span class="num">2</span><div><b>Turn off pop-up blockers and ad blockers</b> for this website during the test.
-        <div class="how">If you use an ad blocker (for example AdBlock, uBlock Origin or Ghostery), click its icon next to the address bar and choose to pause it or turn it off on this site. If your browser blocks pop-ups, allow them for this site in the browser's settings (in Chrome: Settings › Privacy and security › Site settings › Pop-ups and redirects). Your interviewer can help.</div></div></li>
-      <li><span class="num">3</span><div><b>Keep Teams open</b> and share your screen if your interviewer asks you to. Make the browser window full screen.</div></li>
-    </ul>
+    <p><b>Turn off pop-up blockers and ad blockers</b> for this website during the test.</p>
+    <p class="how">If you use an ad blocker (for example AdBlock, uBlock Origin or Ghostery), click its icon next to the address bar and choose to pause it or turn it off on this site. If your browser blocks pop-ups, allow them for this site in the browser's settings (in Chrome: Settings › Privacy and security › Site settings › Pop-ups and redirects). Your interviewer can help.</p>
+    <p class="how" style="margin-top:12px">You can use Chrome, Firefox, Edge or Safari.</p>
   </div>
 
   <div class="card" id="startcard">
@@ -91,12 +91,12 @@ $("f").addEventListener("submit",e=>{
   if(!hit){ $("msg").textContent="We don't recognise that code. Please check it with your interviewer."; $("code").focus(); return; }
   if(!$("ok").checked){ $("msg").textContent="Please tick the box to agree before you start."; return; }
   $("msg").textContent="";
-  const q=new URLSearchParams({pid:code,consent:"1",g:hit[1]}), url=hit[0]+"?"+q.toString();
+  const q=new URLSearchParams({pid:code,consent:"1",g:hit[1],run:Date.now().toString(36)}), url=hit[0]+"?"+q.toString();
   // Open the shop in a new tab: browsers only let a page close a tab that a script opened,
   // so the shop can close itself at the end of the test.
   const w=window.open(url,"_blank");
   if(!w){ location.href=url; return; }           // pop-ups blocked: open in this tab instead
-  $("startcard").innerHTML='<h2>The shop has opened in a new tab</h2><p>Your interviewer will tell you what to do. If you can\'t see the shop, check your other browser tabs.</p>';
+  $("startcard").innerHTML='<h2>The shop has opened in a new tab</h2><p>Your interviewer will guide you. If you can\'t see the shop, check your other browser tabs.</p>';
   const t=setInterval(()=>{ if(w.closed){ clearInterval(t);
     $("startcard").innerHTML='<h2>Thank you for participating!</h2><p>The test is complete. You can now close this window and return to Teams.</p>'; } },1000);
 });
