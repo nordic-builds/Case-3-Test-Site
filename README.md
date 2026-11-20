@@ -428,7 +428,18 @@ reverse-coded items. The scale is the Ethically Minded Consumer Behavior
 scale (Sudbury-Riley &amp; Kohlbacher, 2016).</p>
 </body>
 </html>
-<h2>Test Pages</h2>
+
+<h2>Final Test pages connected to Clarity</h2>
+To open a shop without a code, add ?admin to the address, for example shop-3.html?admin. This also opens the hidden researcher panel. For a normal pilot run, use TEST1 to TEST4 on the start page instead.
+<ul>
+  <li><a href="groceries-togo-site-A-control.html">Shop 1. A (Control)</a></li>
+  <li><a href="groceries-togo-site-B-mixed.html">Shop 2. B (Mixed)</a></li>
+  <li><a href="groceries-togo-site-C-sustainable-top">Shop 3. C (Sustainable top)</a></li>
+  <li><a href="groceries-togo-site-Db-static-highlight.html">Shop 4. D (Static highlight & hover highlight)</a></li>
+</ul>
+
+
+<h2>Old Test Pages</h2>
 <ul>
   <li><a href="groceries-togo-site-A-control.html">Version A (Control)</a></li>
   <li><a href="groceries-togo-site-B-mixed.html">Version B (Mixed)</a></li>
