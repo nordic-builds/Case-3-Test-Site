@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>/* Start-page gate: without a valid participant code for this shop, go to the start page (researchers: add ?admin) */(function(){var q=new URLSearchParams(location.search),p=(q.get("pid")||"").toUpperCase();if(!q.has("admin")&&["P01", "P06", "P10", "P15", "P19", "P22", "TEST1"].indexOf(p)<0)location.replace("start.html");})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Order groceries online | Groceries ToGo</title>
@@ -1445,6 +1446,11 @@ function viewBasket(){
 function viewDone(){
   const orders=store.get('bt_orders',[]); const order=orders[orders.length-1];
   if(!order) return viewBasket();
+  if(order.orderIndex>=TASKS_PER_SESSION){ setTimeout(finishSession,50); return `<main class="page"><div class="done final">
+    <div class="tick"><span class="mi" data-i="check"></span></div>
+    <h1>Thank you for participating!</h1>
+    <p id="fin-msg">The test is complete. This tab will close automatically in a moment.</p>
+  </div></main>`; }
   return `<main class="page"><div class="done">
     <div class="tick"><span class="mi" data-i="check"></span></div>
     <h1>Thank you for your order</h1>
@@ -1620,6 +1626,7 @@ function viewSearch(q){
     else if(ev==="result_click"){C("event",`result_click_${sus(d.sustainableProduct)}`)}
     else if(ev==="add"){C("event",`add_to_basket_${sus(d.sustainableProduct)}`)}
     else if(ev==="enter_blocked"){C("event","enter_key_blocked")}
+    else if(ev==="session_complete"){C("event","session_complete")}
     else if(ev==="pay"){
       const n=d.orderIndex, s=d.items.some(l=>l.sustainableProduct);
       C("event",`purchase_${n}`);C("event",`purchase_${sus(s)}`);C("event",`purchase_${n}_${sus(s)}`);
@@ -1648,7 +1655,7 @@ const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkj
     const body=JSON.stringify({...meta(),events:buf,tasks}); buf=[]; tasks=[];
     try{ if(!(navigator.sendBeacon&&navigator.sendBeacon(LOG_URL,new Blob([body],{type:"text/plain"})))) fetch(LOG_URL,{method:"POST",mode:"no-cors",body,keepalive:true}) }catch(e){}
   }
-  setInterval(flush,3000);
+  setInterval(flush,3000); window.__flushLog=flush;
   addEventListener("pagehide",flush);
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flush()});
   // running summary of the current task
@@ -1714,6 +1721,31 @@ $("rp-save").onclick=()=>{
   SUGG=parseSugg(settings.sugg);saveSettings();newSession();closeRP();
 };
 if(new URLSearchParams(location.search).has("admin")) setTimeout(openRP,50);
+
+/* ---------------- END OF TEST ---------------- */
+const TASKS_PER_SESSION=3;
+function confetti(ms){
+  const c=document.createElement('canvas'),x=c.getContext('2d'),W=c.width=innerWidth,H=c.height=innerHeight;
+  c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9999';document.body.appendChild(c);
+  const col=['#3264ff','#000037','#ffb400','#e6194b','#2bb673','#ff7a00','#9b5de5'],P=[];
+  for(let i=0;i<220;i++){const side=i%2,a=(side?-1:1)*(Math.PI/2.6+Math.random()*.5);
+    P.push({x:side?W*.75:W*.25,y:H*.62,vx:Math.sin(a)*(7+Math.random()*9),vy:-(12+Math.random()*10),w:6+Math.random()*6,h:8+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:col[i%col.length]})}
+  const t0=performance.now();
+  (function f(t){const k=t-t0;x.clearRect(0,0,W,H);
+    for(const p of P){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);
+      x.globalAlpha=Math.max(0,Math.min(1,(ms-k)/500));x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r*2)));x.restore()}
+    if(k<ms)requestAnimationFrame(f);else c.remove()})(t0);
+}
+function finishSession(){
+  if(store.get('bt_finished',false)){closeTab();return}
+  store.set('bt_finished',true);track('session_complete',{orders:store.get('bt_orders',[]).length});
+  confetti(3000);
+  setTimeout(()=>{if(window.__flushLog)window.__flushLog();setTimeout(closeTab,400)},3000);
+}
+function closeTab(){
+  try{window.close()}catch(e){}
+  setTimeout(()=>{const m=document.getElementById('fin-msg');if(m)m.textContent='The test is complete. You can now close this tab.'},300);
+}
 
 /* ---------------- ROUTER ---------------- */
 function render(){

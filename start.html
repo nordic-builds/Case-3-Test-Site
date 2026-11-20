@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome | Groceries ToGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#000037;--blue:#3264ff;--ink:#1a1a2e;--muted:#5b5b70;--line:#dcdce6;--bg:#f4f4f8;--err:#c4262e}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Barlow,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;line-height:1.5}
+  header{background:var(--navy);padding:14px 0}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  .badgelogo{display:inline-block;border:2px solid #fff;border-radius:16px;color:#fff;font-weight:700;font-size:16px;line-height:.95;letter-spacing:-.02em;padding:9px 10px;text-align:center}
+  main{padding:36px 0 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px 36px;margin-bottom:20px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 12px;font-weight:700}
+  h2{font-size:20px;margin:0 0 14px;font-weight:700}
+  p{margin:0 0 12px}
+  ul.check{list-style:none;padding:0;margin:0}
+  ul.check li{display:flex;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+  ul.check li:first-child{border-top:0;padding-top:0}
+  .num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .how{color:var(--muted);font-size:15px;margin-top:4px}
+  label.f{display:block;font-weight:600;margin-bottom:6px}
+  input[type=text]{font:inherit;font-size:22px;letter-spacing:.06em;text-transform:uppercase;width:220px;padding:10px 14px;border:2px solid var(--line);border-radius:8px}
+  input[type=text]::placeholder{text-transform:none;letter-spacing:0}
+  input[type=text]:focus{outline:none;border-color:var(--blue)}
+  .consent{display:flex;gap:12px;align-items:flex-start;margin:22px 0 4px;cursor:pointer}
+  .consent input{width:22px;height:22px;margin:3px 0 0;flex:0 0 22px;accent-color:var(--blue)}
+  button{font:inherit;font-weight:600;font-size:18px;background:var(--blue);color:#fff;border:0;border-radius:24px;padding:12px 34px;margin-top:22px;cursor:pointer}
+  button:hover{filter:brightness(.93)}
+  .msg{color:var(--err);font-weight:600;margin-top:10px;min-height:1.5em}
+  .warn{display:none;background:#fff4e5;border:1px solid #f0b45a;border-radius:10px;padding:14px 18px;margin-bottom:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="badgelogo">groceries<br>togo</span></div></header>
+<main><div class="wrap">
+
+  <div class="warn" id="small">It looks like you are on a phone or a small screen. Please open this link on a laptop or desktop computer instead.</div>
+
+  <div class="card">
+    <h1>Welcome, and thank you for taking part</h1>
+    <p>In this session you will shop for a few items in an online shop called Groceries ToGo. Your interviewer will tell you over Teams what to look for.</p>
+    <p>There are no right or wrong answers. We are testing the website, not you. You will not be asked for any payment details, and nothing is actually bought or delivered.</p>
+  </div>
+
+  <div class="card">
+    <h2>Before you start</h2>
+    <ul class="check">
+      <li><span class="num">1</span><div><b>Use a laptop or desktop computer</b>, not a phone or tablet. Chrome, Edge, Firefox or Safari all work.</div></li>
+      <li><span class="num">2</span><div><b>Turn off pop-up blockers and ad blockers</b> for this website during the test.
+        <div class="how">If you use an ad blocker (for example AdBlock, uBlock Origin or Ghostery), click its icon next to the address bar and choose to pause it or turn it off on this site. If your browser blocks pop-ups, allow them for this site in the browser's settings (in Chrome: Settings › Privacy and security › Site settings › Pop-ups and redirects). Your interviewer can help.</div></div></li>
+      <li><span class="num">3</span><div><b>Keep Teams open</b> and share your screen if your interviewer asks you to. Make the browser window full screen.</div></li>
+    </ul>
+  </div>
+
+  <div class="card" id="startcard">
+    <h2>Start the test</h2>
+    <form id="f" autocomplete="off" novalidate>
+      <label class="f" for="code">Your participant code</label>
+      <input type="text" id="code" placeholder="e.g. P07" maxlength="8" spellcheck="false">
+      <div class="how">Your interviewer gives you this code.</div>
+      <label class="consent"><input type="checkbox" id="ok"><span>I agree that my clicks and movements on this website are recorded for the study. No names or other personal details are collected.</span></label>
+      <button type="submit">Start shopping</button>
+      <div class="msg" id="msg" role="alert"></div>
+    </form>
+  </div>
+
+</div></main>
+<script>
+// Participant code -> [site file, age group]. Codes are given out by the interviewer:
+// P01-P08 = 18-29, P09-P16 = 30-45, P17-P24 = 46+, TEST1-TEST4 = researchers' pilot testing (sites 1-4).
+const CODES={"P01":["shop-1.html","18-29"],"P02":["shop-2.html","18-29"],"P03":["shop-3.html","18-29"],"P04":["shop-4.html","18-29"],"P05":["shop-2.html","18-29"],"P06":["shop-1.html","18-29"],"P07":["shop-4.html","18-29"],"P08":["shop-3.html","18-29"],"P09":["shop-3.html","30-45"],"P10":["shop-1.html","30-45"],"P11":["shop-4.html","30-45"],"P12":["shop-2.html","30-45"],"P13":["shop-2.html","30-45"],"P14":["shop-3.html","30-45"],"P15":["shop-1.html","30-45"],"P16":["shop-4.html","30-45"],"P17":["shop-4.html","46+"],"P18":["shop-2.html","46+"],"P19":["shop-1.html","46+"],"P20":["shop-3.html","46+"],"P21":["shop-4.html","46+"],"P22":["shop-1.html","46+"],"P23":["shop-2.html","46+"],"P24":["shop-3.html","46+"],"TEST1":["shop-1.html","test"],"TEST2":["shop-2.html","test"],"TEST3":["shop-3.html","test"],"TEST4":["shop-4.html","test"]};
+function norm(v){
+  v=v.trim().toUpperCase().replace(/[\s\-_]/g,"");
+  let m=v.match(/^P0*(\d{1,2})$/); if(m) return "P"+String(+m[1]).padStart(2,"0");
+  m=v.match(/^TEST0*([1-4])$/); if(m) return "TEST"+m[1];
+  return v;
+}
+if(Math.min(screen.width,innerWidth)<900 || matchMedia("(pointer:coarse)").matches && !matchMedia("(pointer:fine)").matches)
+  document.getElementById("small").style.display="block";
+const $=id=>document.getElementById(id);
+$("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const code=norm($("code").value), hit=CODES[code];
+  if(!$("code").value.trim()){ $("msg").textContent="Please enter your participant code."; $("code").focus(); return; }
+  if(!hit){ $("msg").textContent="We don't recognise that code. Please check it with your interviewer."; $("code").focus(); return; }
+  if(!$("ok").checked){ $("msg").textContent="Please tick the box to agree before you start."; return; }
+  $("msg").textContent="";
+  const q=new URLSearchParams({pid:code,consent:"1",g:hit[1]}), url=hit[0]+"?"+q.toString();
+  // Open the shop in a new tab: browsers only let a page close a tab that a script opened,
+  // so the shop can close itself at the end of the test.
+  const w=window.open(url,"_blank");
+  if(!w){ location.href=url; return; }           // pop-ups blocked: open in this tab instead
+  $("startcard").innerHTML='<h2>The shop has opened in a new tab</h2><p>Your interviewer will tell you what to do. If you can\'t see the shop, check your other browser tabs.</p>';
+  const t=setInterval(()=>{ if(w.closed){ clearInterval(t);
+    $("startcard").innerHTML='<h2>Thank you for participating!</h2><p>The test is complete. You can now close this window and return to Teams.</p>'; } },1000);
+});
+</script>
+</body>
+</html>
