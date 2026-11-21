@@ -48,7 +48,6 @@ a{color:var(--accent)}
 <li><a href="https://forms.gle/wfFPgBoJKJLGPKWj8">UES-SF</a> (link 1)</li>
 <li><a href="https://forms.gle/AoGbdH4jq9maggZE7">EMCB</a> (link 2)</li>
 </ul>
-<p class="act">Long version with all the reasons: group drive.</p>
 </div>
 
 <div class="card">
