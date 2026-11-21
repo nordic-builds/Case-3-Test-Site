@@ -99,7 +99,7 @@ a{color:var(--accent)}
 <div class="say">"You'll need your participant ID again to start in the shop and for the questionnaires, so please keep the email open."</div>
 <div class="say">"Please share your entire screen now: click Share in the Teams toolbar and choose your screen. Before you do, please close anything private, like other tabs, messages or notifications."</div>
 <p class="act">Entire screen, not one window.</p>
-<div class="say">"Now please open the link called "Shop prototype" in your email. On the first page, type in your participant ID to start. Tell me when you can see the shop."</div>
+<div class="say">"I’m posting a link in the chat now. Please open it, and on the first page type in your participant ID to start. Tell me when you’re in"</div>
 <p class="act">Check that the ID typed is the right one.</p>
 </div>
 
