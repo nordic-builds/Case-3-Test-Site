@@ -44,17 +44,6 @@ a{color:var(--accent)}
 <li><a href="https://forms.gle/wfFPgBoJKJLGPKWj8">UES-SF</a> (link 1)</li>
 <li><a href="https://forms.gle/AoGbdH4jq9maggZE7">EMCB</a> (link 2)</li>
 </ul>
-<p class="act">Long version with all the reasons: group drive.</p>
-</div>
-
-<div class="card">
-<h2>Before each session <small>moderator</small></h2>
-<ul>
-<li>Participant has the email: Teams link, participant ID, GDPR form, neutral shop link, links 1 and 2, camera-off line.</li>
-<li>GDPR form is filled in.</li>
-<li>Check the participant's version (A to D) on your private list. Never say it.</li>
-<li>Test visit shows up in Clarity for that version.</li>
-</ul>
 </div>
 
 <div class="card">
