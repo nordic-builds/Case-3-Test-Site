@@ -1617,6 +1617,7 @@ function viewSearch(q){
   if(u.get("consent")==="1") C("consentv2",{ad_Storage:"denied",analytics_Storage:"granted"});
   C("set","site",LOCK?LOCK.site:"dev");
   C("set","condition",LOCK?LOCK.label:"development");
+  C("set","session_started_at",new Date(started).toLocaleString("sv-SE",{timeZone:"Europe/Copenhagen"}));
   if(settings.pid){C("set","participant",settings.pid);C("identify",settings.pid)}{const g=new URLSearchParams(location.search).get("g");if(g)C("set","age_group",g)}
   const sus=b=>b?"sustainable":"regular";
   let lastQuery=null,lastPick="none (typed)";const lastQ={},lastP={};
@@ -1657,7 +1658,10 @@ const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkj
 (function(){
   if(!LOG_URL) return;
   const sid=Math.random().toString(36).slice(2,8)+"-"+Date.now().toString(36);
-  const meta=()=>({participant:settings.pid||"",site:LOCK?LOCK.site:"dev",condition:LOCK?LOCK.label:settings.cond,session_id:sid});
+  const AGE=new URLSearchParams(location.search).get("g")||"";
+  // local date and time (Copenhagen) when the participant opened the shop, e.g. 2026-11-21 14:55:03
+  const localTime=ms=>new Date(ms).toLocaleString("sv-SE",{timeZone:"Europe/Copenhagen"});
+  const meta=()=>({participant:settings.pid||"",site:LOCK?LOCK.site:"dev",condition:LOCK?LOCK.label:settings.cond,session_id:sid,age_group:AGE,session_started_at:localTime(started)});
   let buf=[],tasks=[];
   function flush(){
     if(!buf.length&&!tasks.length) return;
@@ -1670,8 +1674,12 @@ const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkj
   // running summary per task; a task = one product type (1 water bottle, 2 lunch box, 3 food container)
   const CATS3=["water-bottles","lunch-boxes","food-containers"];
   const newT=()=>({start:null,end:null,searches:[],pick:null,anyEco:0,lists:0,last:[],atPick:null,hoverEco:0,keys:0,enter:0,views:0,rank:{},from:{}});
-  let TT,curCat=null,pendingKeys=0;
-  const resetT=()=>{TT=Object.fromEntries(CATS3.map(c=>[c,newT()]));curCat=null;pendingKeys=0};
+  let TT,curCat=null,ep,lastInput="";
+  const newEp=()=>({keys:0,lists:0,last:[],hoverEco:0,enter:0,start:null});
+  const resetT=()=>{TT=Object.fromEntries(CATS3.map(c=>[c,newT()]));curCat=null;ep=newEp()};
+  // everything typed and shown before a search belongs to the product type of that search
+  const closeEp=c=>{if(!c||!TT[c])return;const T=TT[c];T.keys+=ep.keys;T.lists+=ep.lists;T.enter+=ep.enter;if(ep.hoverEco)T.hoverEco=1;
+    if(ep.last.length)T.last=ep.last;if(ep.start&&(!T.start||ep.start<T.start))T.start=ep.start;ep=newEp()};
   resetT();
   const touch=c=>{const T=TT[c];if(!T)return null;const n=Date.now();if(!T.start)T.start=n;T.end=n;return T};
   window.__sheetBridge=(ev,d)=>{
@@ -1679,17 +1687,18 @@ const LOG_URL="https://script.google.com/macros/s/AKfycbzzV2ek3uNJqWNtKdvkMR3wkj
     let c,T;
     switch(ev){
       case "session_start": resetT(); break;
-      case "keystroke": c=catOf(d.input); if(c){curCat=c;touch(c).keys+=1+pendingKeys;pendingKeys=0} else if(curCat&&norm(d.input).length>3){touch(curCat).keys++} else pendingKeys++; break;
-      case "qac_shown": c=catOf(((d.suggestions||[])[0]||{}).text); if(!c)break; curCat=c; T=touch(c); T.lists++; T.last=d.suggestions||[]; T.keys+=pendingKeys; pendingKeys=0; break;
-      case "qac_hover": c=catOf(d.text); if(c&&d.eco) touch(c).hoverEco=1; break;
-      case "qac_select": c=catOf(d.text)||curCat; if(!c)break; T=touch(c); T.pick=d; if(d.eco)T.anyEco=1; T.atPick=T.last; break;
+      case "keystroke": if(!ep.start)ep.start=Date.now(); ep.keys++; lastInput=d.input||""; break;
+      case "qac_shown": if(!ep.start)ep.start=Date.now(); ep.lists++; ep.last=d.suggestions||[]; break;
+      case "qac_hover": if(d.eco) ep.hoverEco=1; break;
+      case "enter_blocked": ep.enter++; break;
+      case "qac_select": c=catOf(d.text)||catOf(d.typed)||curCat; if(!c)break; curCat=c; closeEp(c); T=touch(c); T.pick=d; if(d.eco)T.anyEco=1; T.atPick=T.last; break;
       case "search_submit": c=catOf(d.query)||curCat; if(c) touch(c).searches.push(d.query); break;
-      case "enter_blocked": c=catOf(d.input)||curCat; if(c) touch(c).enter++; break;
       case "view_product": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(c) touch(c).views++; break;
       case "result_click": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(c) touch(c).rank[d.id]=d.rank; break;
       case "add": c=BY_ID[d.id]&&BY_ID[d.id].cat; if(!c)break; T=touch(c); T.from[d.id]=d.source; if(d.source==="card"&&window.__lastCardRank) T.rank[d.id]=window.__lastCardRank; break;
       case "pay": {
         const all=d.items||[];
+        if(ep.keys||ep.lists) closeEp(catOf(lastInput)||curCat);
         for(const cat of CATS3){
           const T=TT[cat], items=all.filter(l=>l.cat===cat), list=T.atPick||T.last||[], eco=list.filter(s=>s.eco);
           tasks.push({...meta(),
