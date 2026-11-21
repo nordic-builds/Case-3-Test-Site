@@ -6,9 +6,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
 <title>Interviewer cue cards</title>
 <style>
-:root{--bg:#fff;--fg:#1f2328;--muted:#59636e;--line:#d0d7de;--card:#f6f8fa;--say-bg:#eaf2fb;--say-line:#2b6cb0;--accent:#0969da;--warn:#fff4d6;--warn-line:#c99a00}
+:root{color-scheme:light dark;--bg:#fff;--fg:#1f2328;--muted:#59636e;--line:#d0d7de;--card:#f6f8fa;--say-bg:#eaf2fb;--say-line:#2b6cb0;--accent:#0969da;--warn:#fff4d6;--warn-line:#c99a00}
 @media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;--line:#30363d;--card:#161b22;--say-bg:#12233a;--say-line:#58a6ff;--accent:#58a6ff;--warn:#2d2508;--warn-line:#d4a72c}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:0 max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -25,8 +26,11 @@ h3{font-size:1rem;margin:1.2rem 0 .4rem}
 .act{margin:.4rem 0}
 .warn{background:var(--warn);border-left:4px solid var(--warn-line);padding:8px 12px;margin:8px 0;border-radius:0 6px 6px 0}
 table{border-collapse:collapse;width:100%;margin:8px 0;background:var(--bg)}
-th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top;color:var(--fg)}
+td{background:var(--bg)}
+tr:nth-child(odd) td,tr:nth-child(even) td{background:var(--bg);color:var(--fg)}
 th{background:var(--card);font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+td *,th *{color:inherit}
 .tw{overflow-x:auto}
 ul{margin:.3rem 0;padding-left:1.2rem}
 a{color:var(--accent)}
@@ -44,6 +48,7 @@ a{color:var(--accent)}
 <li><a href="https://forms.gle/wfFPgBoJKJLGPKWj8">UES-SF</a> (link 1)</li>
 <li><a href="https://forms.gle/AoGbdH4jq9maggZE7">EMCB</a> (link 2)</li>
 </ul>
+<p class="act">Long version with all the reasons: group drive.</p>
 </div>
 
 <div class="card">
