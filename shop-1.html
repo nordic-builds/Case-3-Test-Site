@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>/* Start-page gate: without a valid participant code for this shop, go to the start page (researchers: add ?admin) */(function(){var q=new URLSearchParams(location.search),p=(q.get("pid")||"").toUpperCase();if(!q.has("admin")&&["P01", "P06", "P10", "P15", "P19", "P22", "TEST1"].indexOf(p)<0){location.replace("start.html");return}try{var run=q.get("run")||"",ss=sessionStorage,fin=ss.getItem("siteA_bt_finished")==="true";if(run?ss.getItem("gtg_run")!==run:fin){ss.clear();if(run)ss.setItem("gtg_run",run);if(location.hash)history.replaceState(null,"",location.pathname+location.search)}}catch(e){}})();</script>
+<script>/* Start-page gate: without a valid participant code for this shop, go to the start page (researchers: add ?admin) */(function(){var q=new URLSearchParams(location.search),p=(q.get("pid")||"").toUpperCase();if(!q.has("admin")&&["P01", "P05", "P09", "P13", "P17", "P21", "TEST1"].indexOf(p)<0){location.replace("start.html");return}try{var run=q.get("run")||"",ss=sessionStorage,fin=ss.getItem("siteA_bt_finished")==="true";if(run?ss.getItem("gtg_run")!==run:fin){ss.clear();if(run)ss.setItem("gtg_run",run);if(location.hash)history.replaceState(null,"",location.pathname+location.search)}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Order groceries online | Groceries ToGo</title>
