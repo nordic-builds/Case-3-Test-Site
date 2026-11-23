@@ -124,7 +124,7 @@ a{color:var(--accent)}
 
 <div class="card">
 <h2>7. UES-SF <small>2 min</small></h2>
-<div class="say">"Please go back to the email and open link 1. The first question asks for your participant ID. Fill it in now, and tell me when you're done."</div>
+<div class="say">"Please go back to the email and open the link that says "Questionnaire about your experience". The first question asks for your participant ID. Fill it in now, and tell me when you're done."</div>
 <p class="act">Can't find the email: share link 1 in the chat. Stay quiet.</p>
 </div>
 
@@ -175,7 +175,7 @@ a{color:var(--accent)}
 
 <div class="card">
 <h2>10. EMCB <small>2 min</small></h2>
-<div class="say">"Thank you. One more short questionnaire. Please go back to the email and open link 2. Again, the first question asks for your participant ID. Tell me when you're done."</div>
+<div class="say">"Thank you. One more short questionnaire. Please go back to the email and open the second link that says "Questionnaire about your shopping habits". Again, the first question asks for your participant ID. Tell me when you're done."</div>
 </div>
 
 <div class="card">
